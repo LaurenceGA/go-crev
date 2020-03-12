@@ -1,0 +1,64 @@
+linters-settings:
+  gocognit:
+    min-complexity: 10
+  gocyclo:
+    min-complexity: 10
+
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - funlen
+    - gochecknoinits
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goimports
+    - golint
+    - gomnd
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - interfacer
+    - lll
+    - misspell
+    - nakedret
+    - rowserrcheck
+    - scopelint
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+    - whitespace
+    - gochecknoglobals
+    - gocognit
+    - godox
+    - maligned
+    - prealloc
+    - wsl
+
+issues:
+  exclude-rules:
+    - path: .*/mocks/generate\.go
+      linters:
+        - lll
+    - path: .*_test.go
+      linters:
+        - gomnd
+
+# golangci.com configuration
+# https://github.com/golangci/golangci/wiki/Configuration
+service:
+  golangci-lint-version: 1.23.x # use the fixed version to not introduce new linters unexpectedly
