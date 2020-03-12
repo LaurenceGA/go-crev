@@ -8,8 +8,8 @@ import (
 
 func main() {
 	rootCmd := command.InitialiseRootCommand()
-	err := rootCmd.Execute()
 
+	err := rootCmd.Execute()
 	if err != nil {
 		log.Fatal(err)
 	}
