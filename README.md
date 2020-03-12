@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="https://github.com/LaurenceGA/go-crev/workflows/Master%20checks/badge.svg" />
+</p>
+
 # go-crev
 A cryptographically verifiable code review system for go packages.
 
