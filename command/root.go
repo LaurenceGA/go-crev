@@ -8,7 +8,7 @@ func InitialiseRootCommand() *cobra.Command {
 		Short: "A cryptographically verifiable code review system for go packages.",
 		Long: `gocrev is a social code review system.
 
-This is an implementation of the language agnostic crev.
+This is a go specific implementation of the language agnostic code review system crev.
 For more information see here: https://github.com/crev-dev/crev
 
 gocrev is in the early stages of development, please raise
