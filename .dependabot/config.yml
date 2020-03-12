@@ -1,0 +1,16 @@
+version: 1
+update_configs:
+  - package_manager: go:modules
+    directory: /
+    update_schedule: weekly
+    default_reviewers:
+      - LaurenceGA
+    default_labels:
+      - dependencies
+  - package_manager: github_actions
+    directory: /
+    update_schedule: weekly
+    default_reviewers:
+      - LaurenceGA
+    default_labels:
+      - dependencies
