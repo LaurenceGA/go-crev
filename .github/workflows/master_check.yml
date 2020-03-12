@@ -1,4 +1,4 @@
-name: Master check
+name: Master checks
 
 on:
   push:
