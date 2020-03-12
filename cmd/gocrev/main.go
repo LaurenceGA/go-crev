@@ -10,7 +10,7 @@ import (
 func main() {
 	rootCmd := command.InitialiseRootCommand()
 
-	err := rootCmd.Execute(context.Background())
+	err := rootCmd.ExecuteContext(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
