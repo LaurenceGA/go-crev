@@ -19,8 +19,8 @@ For more information see here: https://github.com/crev-dev/crev
 gocrev is in the early stages of development, please raise
 issues here: https://github.com/LaurenceGA/go-crev/issues
 
-Built at %s
-`, version.BuildTime),
+This is version %s, built at %s
+`, version.Version, version.BuildTime),
 		Version: version.Version,
 	}
 }
