@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/magefile/mage/sh"
 )
@@ -15,7 +16,11 @@ func Build() error {
 }
 
 func ldFlagsArg() string {
-	return constructLDFlags("123", "1.2.5")
+	return constructLDFlags(getBuildDate(), "1.2.5")
+}
+
+func getBuildDate() string {
+	return time.Now().Format(time.RFC3339)
 }
 
 func constructLDFlags(buildTime, version string) string {
