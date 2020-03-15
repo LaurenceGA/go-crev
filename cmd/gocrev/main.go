@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/LaurenceGA/go-crev/command"
+	"github.com/LaurenceGA/go-crev/internal/command"
 )
 
 func main() {

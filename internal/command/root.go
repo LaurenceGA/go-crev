@@ -2,13 +2,19 @@ package command
 
 import (
 	"fmt"
+	"io"
+	"os"
 
 	"github.com/LaurenceGA/go-crev/version"
 	"github.com/spf13/cobra"
 )
 
 func InitialiseRootCommand() *cobra.Command {
-	return &cobra.Command{
+	return NewRootCommand(os.Stdin, os.Stdout, os.Stderr)
+}
+
+func NewRootCommand(in io.Reader, out, err io.Writer) *cobra.Command {
+	rootCmd := &cobra.Command{
 		Use:   "gocrev",
 		Short: "A cryptographically verifiable code review system for go packages.",
 		Long: fmt.Sprintf(`gocrev is a social code review system.
@@ -23,4 +29,11 @@ This is version %s, built at %s
 `, version.Version, version.BuildTime),
 		Version: version.Version,
 	}
+
+	rootCmd.AddCommand(NewStoreCommand())
+	rootCmd.SetIn(in)
+	rootCmd.SetOut(out)
+	rootCmd.SetErr(err)
+
+	return rootCmd
 }
