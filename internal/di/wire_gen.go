@@ -13,8 +13,8 @@ import (
 // Injectors from wire.go:
 
 func InitialiseGoCrev() (*app.Application, error) {
-	commandIO := command.DefaultIO()
-	cobraCommand := command.NewRootCommand(commandIO)
+	io := command.DefaultIO()
+	cobraCommand := command.NewRootCommand(io)
 	application := app.NewApplication(cobraCommand)
 	return application, nil
 }

@@ -11,7 +11,6 @@ var (
 	Provider = wire.NewSet(
 		NewApplication,
 
-		command.NewRootCommand,
-		command.DefaultIO,
+		command.CommandProvider,
 	)
 )
