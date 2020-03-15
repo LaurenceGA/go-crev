@@ -9,20 +9,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func DefaultIO() *CommandIO {
-	return &CommandIO{
+func DefaultIO() *IO {
+	return &IO{
 		in:  os.Stdin,
 		out: os.Stdout,
 		err: os.Stderr,
 	}
 }
 
-type CommandIO struct {
+type IO struct {
 	in       io.Reader
 	out, err io.Writer
 }
 
-func NewRootCommand(commandIO *CommandIO) *cobra.Command {
+func NewRootCommand(commandIO *IO) *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   "gocrev",
 		Short: "A cryptographically verifiable code review system for go packages.",
