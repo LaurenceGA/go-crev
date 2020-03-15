@@ -9,11 +9,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func InitialiseRootCommand() *cobra.Command {
-	return NewRootCommand(os.Stdin, os.Stdout, os.Stderr)
+func DefaultIO() *CommandIO {
+	return &CommandIO{
+		in:  os.Stdin,
+		out: os.Stdout,
+		err: os.Stderr,
+	}
 }
 
-func NewRootCommand(in io.Reader, out, err io.Writer) *cobra.Command {
+type CommandIO struct {
+	in       io.Reader
+	out, err io.Writer
+}
+
+func NewRootCommand(commandIO *CommandIO) *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   "gocrev",
 		Short: "A cryptographically verifiable code review system for go packages.",
@@ -31,9 +40,9 @@ This is version %s, built at %s
 	}
 
 	rootCmd.AddCommand(NewStoreCommand())
-	rootCmd.SetIn(in)
-	rootCmd.SetOut(out)
-	rootCmd.SetErr(err)
+	rootCmd.SetIn(commandIO.in)
+	rootCmd.SetOut(commandIO.out)
+	rootCmd.SetErr(commandIO.err)
 
 	return rootCmd
 }
