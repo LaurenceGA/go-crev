@@ -39,7 +39,7 @@ func (s *RootTestSuite) TestRootCommands() {
 	for _, tt := range tests {
 		tt := tt
 		s.Run(tt.name, func() {
-			cmd := NewRootCommand(nil, nil, nil)
+			cmd := NewRootCommand(DefaultIO())
 			cmd.SetArgs(tt.args)
 
 			err := cmd.Execute()
