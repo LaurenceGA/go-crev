@@ -7,6 +7,7 @@ func New() *Fetcher {
 type Fetcher struct {
 }
 
-func (f *Fetcher) Fetch(url string) error {
+// Fetch will download a store from a URL to the cache.
+func (f *Fetcher) Fetch(fetchURL string) error {
 	return nil
 }
