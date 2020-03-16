@@ -1,17 +1,17 @@
 package main
 
 import (
+	"context"
 	"log"
 
-	"github.com/LaurenceGA/go-crev/internal/di"
+	"github.com/LaurenceGA/go-crev/internal/command"
 )
 
 func main() {
-	app, err := di.InitialiseGoCrev()
+	rootCmd := command.NewRootCommand(command.DefaultIO())
+
+	err := rootCmd.ExecuteContext(context.Background())
 	if err != nil {
 		log.Fatal(err)
-		return
 	}
-
-	app.Execute()
 }
