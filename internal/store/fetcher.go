@@ -1,5 +1,9 @@
 package store
 
+func New() *Fetcher {
+	return &Fetcher{}
+}
+
 type Fetcher struct {
 }
 

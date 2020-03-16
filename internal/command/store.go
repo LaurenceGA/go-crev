@@ -1,9 +1,7 @@
 package command
 
 import (
-	"fmt"
-
-	"github.com/LaurenceGA/go-crev/internal/store"
+	"github.com/LaurenceGA/go-crev/internal/di"
 	"github.com/spf13/cobra"
 )
 
@@ -18,32 +16,20 @@ func NewStoreCommand() *cobra.Command {
 	return storeCmd
 }
 
-type Fetcher interface {
-	Fetch(string) error
-}
-
-type FetchStoreCommand struct {
-	fetcher Fetcher
-}
+const expectedFetchStoreArguments = 1
 
 func NewFetchCommand() *cobra.Command {
-	cmd := &FetchStoreCommand{
-		fetcher: &store.Fetcher{},
-	}
-
 	return &cobra.Command{
 		Use:   "fetch <url>",
 		Short: "Fetch a proof store",
-		RunE:  cmd.fetchStore,
+		RunE:  fetchStore,
+		Args:  cobra.ExactArgs(expectedFetchStoreArguments),
 	}
 }
 
-const expectedFetchStoreArguments = 1
+// args must be equal to length 1. This is ensured by cobra
+func fetchStore(cmd *cobra.Command, args []string) error {
+	fetcher := di.InitialiseStoreFetcher()
 
-func (f *FetchStoreCommand) fetchStore(cmd *cobra.Command, args []string) error {
-	if len(args) != expectedFetchStoreArguments {
-		return fmt.Errorf("expected %d arguments, got %d", expectedFetchStoreArguments, len(args))
-	}
-
-	return f.fetcher.Fetch(args[0])
+	return fetcher.Fetch(args[0])
 }
