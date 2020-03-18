@@ -6,12 +6,14 @@
 package di
 
 import (
+	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/store"
 )
 
 // Injectors from wire.go:
 
 func InitialiseStoreFetcher() *store.Fetcher {
-	fetcher := store.New()
+	client := git.NewClient()
+	fetcher := store.NewFetcher(client)
 	return fetcher
 }

@@ -31,5 +31,5 @@ func NewFetchCommand() *cobra.Command {
 func fetchStore(cmd *cobra.Command, args []string) error {
 	fetcher := di.InitialiseStoreFetcher()
 
-	return fetcher.Fetch(args[0])
+	return fetcher.Fetch(cmd.Context(), args[0])
 }

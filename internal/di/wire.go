@@ -4,12 +4,16 @@
 package di
 
 import (
+	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/google/wire"
 )
 
 func InitialiseStoreFetcher() *store.Fetcher {
 	panic(wire.Build(
-		store.New,
+		store.NewFetcher,
+
+		wire.Bind(new(store.GitCloner), new(*git.Client)),
+		git.NewClient,
 	))
 }

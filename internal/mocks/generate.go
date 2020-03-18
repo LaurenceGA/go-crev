@@ -1,3 +1,3 @@
 package mocks
 
-// mockgen -package=mocks -destination=mock_fetcher.go github.com/LaurenceGA/go-crev/internal/command Fetcher
+//go:generate mockgen -package=mocks -destination=mock_cloner.go github.com/LaurenceGA/go-crev/internal/store GitCloner
