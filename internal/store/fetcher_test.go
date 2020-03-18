@@ -34,7 +34,10 @@ func (s *FetcherSuite) TestFailToClone() {
 		Clone(gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil, errors.New("failed to clone"))
 
-	fetcher := NewFetcher(mockGitCloner)
+	mockFileDirs := mocks.NewMockFileDirs(s.controller)
+	mockFileDirs.EXPECT().Cache().Return("cache")
+
+	fetcher := NewFetcher(mockGitCloner, mockFileDirs)
 
 	err := fetcher.Fetch(context.Background(), "")
 
@@ -47,7 +50,10 @@ func (s *FetcherSuite) TestCloneSuccess() {
 		Clone(gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil, nil)
 
-	fetcher := NewFetcher(mockGitCloner)
+	mockFileDirs := mocks.NewMockFileDirs(s.controller)
+	mockFileDirs.EXPECT().Cache().Return("cache")
+
+	fetcher := NewFetcher(mockGitCloner, mockFileDirs)
 
 	err := fetcher.Fetch(context.Background(), "")
 

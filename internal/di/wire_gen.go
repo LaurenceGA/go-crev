@@ -6,6 +6,7 @@
 package di
 
 import (
+	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/store"
 )
@@ -14,6 +15,7 @@ import (
 
 func InitialiseStoreFetcher() *store.Fetcher {
 	client := git.NewClient()
-	fetcher := store.NewFetcher(client)
+	filesystem := files.NewFilesystem()
+	fetcher := store.NewFetcher(client, filesystem)
 	return fetcher
 }

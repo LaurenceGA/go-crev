@@ -4,6 +4,7 @@
 package di
 
 import (
+	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/google/wire"
@@ -15,5 +16,8 @@ func InitialiseStoreFetcher() *store.Fetcher {
 
 		wire.Bind(new(store.GitCloner), new(*git.Client)),
 		git.NewClient,
+
+		wire.Bind(new(store.FileDirs), new(*files.Filesystem)),
+		files.NewFilesystem,
 	))
 }

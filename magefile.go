@@ -71,5 +71,5 @@ func getShortHash() string {
 }
 
 func constructLDFlags(buildTime, version string) string {
-	return fmt.Sprintf("-X '%s/version.BuildTime=%s' -X '%s/version.Version=%s'", thisRepo, buildTime, thisRepo, version)
+	return fmt.Sprintf("-X '%s/meta.BuildTime=%s' -X '%s/meta.Version=%s'", thisRepo, buildTime, thisRepo, version)
 }

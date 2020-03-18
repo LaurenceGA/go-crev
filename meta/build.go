@@ -1,4 +1,4 @@
-package version
+package meta
 
 // nolint:gochecknoglobals // set by ldflags
 var (

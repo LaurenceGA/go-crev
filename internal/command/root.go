@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/LaurenceGA/go-crev/version"
+	"github.com/LaurenceGA/go-crev/meta"
 	"github.com/spf13/cobra"
 )
 
@@ -24,19 +24,19 @@ type IO struct {
 
 func NewRootCommand(commandIO *IO) *cobra.Command {
 	rootCmd := &cobra.Command{
-		Use:   "gocrev",
+		Use:   meta.AppName,
 		Short: "A cryptographically verifiable code review system for go packages.",
-		Long: fmt.Sprintf(`gocrev is a social code review system.
+		Long: fmt.Sprintf(`%s is a social code review system.
 
 This is a go specific implementation of the language agnostic code review system crev.
 For more information see here: https://github.com/crev-dev/crev
 
-gocrev is in the early stages of development, please raise
+%s is in the early stages of development, please raise
 issues here: https://github.com/LaurenceGA/go-crev/issues
 
 This is version %s, built at %s
-`, version.Version, version.BuildTime),
-		Version: version.Version,
+`, meta.AppName, meta.AppName, meta.Version, meta.BuildTime),
+		Version: meta.Version,
 	}
 
 	rootCmd.AddCommand(NewStoreCommand())
