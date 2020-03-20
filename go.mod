@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/adrg/xdg v0.2.1
-	github.com/golang/mock v1.4.2
+	github.com/golang/mock v1.4.3
 	github.com/google/wire v0.4.0
 	github.com/kr/text v0.2.0 // indirect
 	github.com/magefile/mage v1.9.0
