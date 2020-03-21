@@ -2,27 +2,13 @@ package command
 
 import (
 	"fmt"
-	"io"
-	"os"
 
+	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/meta"
 	"github.com/spf13/cobra"
 )
 
-func DefaultIO() *IO {
-	return &IO{
-		in:  os.Stdin,
-		out: os.Stdout,
-		err: os.Stderr,
-	}
-}
-
-type IO struct {
-	in       io.Reader
-	out, err io.Writer
-}
-
-func NewRootCommand(commandIO *IO) *cobra.Command {
+func NewRootCommand(commandIO *io.IO) *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   meta.AppName,
 		Short: "A cryptographically verifiable code review system for go packages.",
@@ -40,9 +26,11 @@ This is version %s, built at %s
 	}
 
 	rootCmd.AddCommand(NewStoreCommand())
-	rootCmd.SetIn(commandIO.in)
-	rootCmd.SetOut(commandIO.out)
-	rootCmd.SetErr(commandIO.err)
+	rootCmd.AddCommand(NewVerifyCommand())
+
+	rootCmd.SetIn(commandIO.In())
+	rootCmd.SetOut(commandIO.Out())
+	rootCmd.SetErr(commandIO.Err())
 
 	return rootCmd
 }
