@@ -23,7 +23,7 @@ type Client struct {
 func (g *Client) Clone(ctx context.Context, url string, location string) (*Repository, error) {
 	repo, err := git.PlainCloneContext(ctx, location, false, &git.CloneOptions{
 		URL:      url,
-		Progress: os.Stdout,
+		Progress: os.Stdout,	//TODO change to cmd output
 	})
 
 	if err != nil {

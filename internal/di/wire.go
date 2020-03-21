@@ -7,9 +7,11 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/store"
+	"github.com/LaurenceGA/go-crev/internal/verifier"
 	"github.com/google/wire"
 )
 
+// InitialiseStoreFetcher create a fetcher for fetching crev proof stores
 func InitialiseStoreFetcher() *store.Fetcher {
 	panic(wire.Build(
 		store.NewFetcher,
@@ -19,5 +21,11 @@ func InitialiseStoreFetcher() *store.Fetcher {
 
 		wire.Bind(new(store.FileDirs), new(*files.Filesystem)),
 		files.NewFilesystem,
+	))
+}
+
+func InitialiseVerifier() *verifier.Verifier {
+	panic(wire.Build(
+		verifier.New,
 	))
 }

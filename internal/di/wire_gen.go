@@ -9,6 +9,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/store"
+	"github.com/LaurenceGA/go-crev/internal/verifier"
 )
 
 // Injectors from wire.go:
@@ -18,4 +19,9 @@ func InitialiseStoreFetcher() *store.Fetcher {
 	filesystem := files.NewFilesystem()
 	fetcher := store.NewFetcher(client, filesystem)
 	return fetcher
+}
+
+func InitialiseVerifier() *verifier.Verifier {
+	verifierVerifier := verifier.New()
+	return verifierVerifier
 }
