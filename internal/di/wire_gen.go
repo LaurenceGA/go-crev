@@ -6,6 +6,7 @@
 package di
 
 import (
+	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/store"
@@ -14,8 +15,8 @@ import (
 
 // Injectors from wire.go:
 
-func InitialiseStoreFetcher() *store.Fetcher {
-	client := git.NewClient()
+func InitialiseStoreFetcher(commandIO *io.IO) *store.Fetcher {
+	client := git.NewClient(commandIO)
 	filesystem := files.NewFilesystem()
 	fetcher := store.NewFetcher(client, filesystem)
 	return fetcher

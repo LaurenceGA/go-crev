@@ -4,6 +4,7 @@
 package di
 
 import (
+	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/store"
@@ -12,7 +13,7 @@ import (
 )
 
 // InitialiseStoreFetcher create a fetcher for fetching crev proof stores
-func InitialiseStoreFetcher() *store.Fetcher {
+func InitialiseStoreFetcher(commandIO *io.IO) *store.Fetcher {
 	panic(wire.Build(
 		store.NewFetcher,
 
