@@ -3,6 +3,7 @@ package command
 import (
 	"testing"
 
+	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -39,7 +40,7 @@ func (s *RootTestSuite) TestRootCommands() {
 	for _, tt := range tests {
 		tt := tt
 		s.Run(tt.name, func() {
-			cmd := NewRootCommand(DefaultIO())
+			cmd := NewRootCommand(&io.IO{})
 			cmd.SetArgs(tt.args)
 
 			err := cmd.Execute()
