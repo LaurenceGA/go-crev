@@ -7,6 +7,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
+	"github.com/LaurenceGA/go-crev/internal/mod"
 	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/LaurenceGA/go-crev/internal/verifier"
 	"github.com/google/wire"
@@ -28,5 +29,8 @@ func InitialiseStoreFetcher(commandIO *io.IO) *store.Fetcher {
 func InitialiseVerifier() *verifier.Verifier {
 	panic(wire.Build(
 		verifier.New,
+
+		wire.Bind(new(verifier.ModLister), new(*mod.Lister)),
+		mod.NewLister,
 	))
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
+	"github.com/LaurenceGA/go-crev/internal/mod"
 	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/LaurenceGA/go-crev/internal/verifier"
 )
@@ -23,6 +24,7 @@ func InitialiseStoreFetcher(commandIO *io.IO) *store.Fetcher {
 }
 
 func InitialiseVerifier() *verifier.Verifier {
-	verifierVerifier := verifier.New()
+	lister := mod.NewLister()
+	verifierVerifier := verifier.New(lister)
 	return verifierVerifier
 }

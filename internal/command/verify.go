@@ -1,6 +1,9 @@
 package command
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/LaurenceGA/go-crev/internal/di"
+	"github.com/spf13/cobra"
+)
 
 func NewVerifyCommand() *cobra.Command {
 	verifyCmd := &cobra.Command{
@@ -13,5 +16,7 @@ func NewVerifyCommand() *cobra.Command {
 }
 
 func verifyCurrentPackage(cmd *cobra.Command, args []string) error {
-	return nil
+	verifier := di.InitialiseVerifier()
+
+	return verifier.Verify()
 }
