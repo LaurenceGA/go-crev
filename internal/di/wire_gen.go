@@ -25,8 +25,8 @@ func InitialiseStoreFetcher(commandIO *io.IO) *store.Fetcher {
 }
 
 func InitialiseVerifier(commandIO *io.IO) *verifier.Verifier {
-	modWrapper := mod.NewWrapper()
-	lister := mod.NewLister(modWrapper)
+	wrapper := mod.NewWrapper()
+	lister := mod.NewLister(wrapper)
 	counter := cloc.New()
 	verifierVerifier := verifier.New(commandIO, lister, counter)
 	return verifierVerifier

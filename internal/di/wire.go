@@ -33,8 +33,8 @@ func InitialiseVerifier(commandIO *io.IO) *verifier.Verifier {
 
 		wire.Bind(new(verifier.ModLister), new(*mod.Lister)),
 		mod.NewLister,
-		wire.Bind(new(mod.ModulesWrapper), new(*mod.ModWrapper)),
-		mod.NewModWrapper,
+		wire.Bind(new(mod.ModulesWrapper), new(*mod.Wrapper)),
+		mod.NewWrapper,
 
 		wire.Bind(new(verifier.LineCounter), new(*cloc.Counter)),
 		cloc.New,
