@@ -1,22 +1,22 @@
 package mod
 
 import (
-	"bytes"
 	"encoding/json"
-	"io"
-	"os/exec"
 	"time"
 )
 
-func NewLister() *Lister {
-	return &Lister{}
+func NewLister(modWrapper ModulesWrapper) *Lister {
+	return &Lister{
+		modWrapper: modWrapper,
+	}
 }
 
 type Lister struct {
+	modWrapper ModulesWrapper
 }
 
 func (l *Lister) List() ([]*Module, error) {
-	cmdOutput, err := l.modList()
+	cmdOutput, err := l.modWrapper.List()
 	if err != nil {
 		return nil, err
 	}
@@ -35,21 +35,6 @@ func (l *Lister) List() ([]*Module, error) {
 
 		modules = append(modules, &v)
 	}
-}
-
-func (l *Lister) modList() (io.Reader, error) {
-	// Consider adding back in "-u". It will slow things down.
-	cmd := exec.Command("go", "list", "-m", "-json", "all")
-
-	var out bytes.Buffer
-	cmd.Stdout = &out
-
-	err := cmd.Run()
-	if err != nil {
-		return nil, err
-	}
-
-	return &out, nil
 }
 
 // Module holds information about a specific module listed by go list

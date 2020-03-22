@@ -59,9 +59,10 @@ func (v *Verifier) createVerifications(allModules []*mod.Module) []*Verification
 
 		linesOfCode, err := v.lineCounter.CountLines(m.Dir)
 		if err != nil {
+			//TODO return actual err
 			fmt.Println(err)
+
 			linesOfCode = -1
-			//TODO return err
 		}
 
 		verifications = append(verifications, &Verification{
