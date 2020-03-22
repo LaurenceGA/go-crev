@@ -7,6 +7,7 @@ require (
 	github.com/go-openapi/strfmt v0.19.5 // indirect
 	github.com/golang/mock v1.4.3
 	github.com/google/wire v0.4.0
+	github.com/hhatto/gocloc v0.3.2
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/kr/text v0.2.0 // indirect
 	github.com/magefile/mage v1.9.0

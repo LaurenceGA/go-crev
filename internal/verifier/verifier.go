@@ -1,6 +1,8 @@
 package verifier
 
 import (
+	"fmt"
+
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/mod"
 
@@ -11,20 +13,27 @@ type ModLister interface {
 	List() ([]*mod.Module, error)
 }
 
-func New(modLister ModLister, commandIO *io.IO) *Verifier {
+type LineCounter interface {
+	CountLines(string) (int, error)
+}
+
+func New(commandIO *io.IO, modLister ModLister, lineCounter LineCounter) *Verifier {
 	return &Verifier{
-		modLister: modLister,
-		commandIO: commandIO,
+		modLister:   modLister,
+		commandIO:   commandIO,
+		lineCounter: lineCounter,
 	}
 }
 
 type Verifier struct {
-	modLister ModLister
-	commandIO *io.IO
+	commandIO   *io.IO
+	modLister   ModLister
+	lineCounter LineCounter
 }
 
 type Verification struct {
 	Package, Version string
+	LineOfCode       int
 }
 
 func (v *Verifier) Verify() error {
@@ -48,9 +57,17 @@ func (v *Verifier) createVerifications(allModules []*mod.Module) []*Verification
 			continue
 		}
 
+		linesOfCode, err := v.lineCounter.CountLines(m.Dir)
+		if err != nil {
+			fmt.Println(err)
+			linesOfCode = -1
+			//TODO return err
+		}
+
 		verifications = append(verifications, &Verification{
-			Package: m.Path,
-			Version: m.Version,
+			Package:    m.Path,
+			Version:    m.Version,
+			LineOfCode: linesOfCode,
 		})
 	}
 
@@ -59,12 +76,12 @@ func (v *Verifier) createVerifications(allModules []*mod.Module) []*Verification
 
 func (v *Verifier) writeVerifications(verifications []*Verification) {
 	t := table.NewWriter()
-	t.AppendHeader(table.Row{"Package", "Version"})
+	t.AppendHeader(table.Row{"Package", "Version", "Lines of code"})
 	t.SetOutputMirror(v.commandIO.Out())
 	t.SetStyle(table.StyleLight)
 
 	for _, ver := range verifications {
-		t.AppendRow(table.Row{ver.Package, ver.Version})
+		t.AppendRow(table.Row{ver.Package, ver.Version, ver.LineOfCode})
 	}
 
 	t.Render()

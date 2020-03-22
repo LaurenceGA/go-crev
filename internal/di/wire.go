@@ -10,6 +10,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/mod"
 	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/LaurenceGA/go-crev/internal/verifier"
+	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
 	"github.com/google/wire"
 )
 
@@ -32,5 +33,8 @@ func InitialiseVerifier(commandIO *io.IO) *verifier.Verifier {
 
 		wire.Bind(new(verifier.ModLister), new(*mod.Lister)),
 		mod.NewLister,
+
+		wire.Bind(new(verifier.LineCounter), new(*cloc.Counter)),
+		cloc.New,
 	))
 }

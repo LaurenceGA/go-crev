@@ -12,6 +12,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/mod"
 	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/LaurenceGA/go-crev/internal/verifier"
+	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
 )
 
 // Injectors from wire.go:
@@ -25,6 +26,7 @@ func InitialiseStoreFetcher(commandIO *io.IO) *store.Fetcher {
 
 func InitialiseVerifier(commandIO *io.IO) *verifier.Verifier {
 	lister := mod.NewLister()
-	verifierVerifier := verifier.New(lister, commandIO)
+	counter := cloc.New()
+	verifierVerifier := verifier.New(commandIO, lister, counter)
 	return verifierVerifier
 }
