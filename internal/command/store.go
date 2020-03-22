@@ -1,7 +1,6 @@
 package command
 
 import (
-	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/di"
 	"github.com/spf13/cobra"
 )
@@ -30,7 +29,7 @@ func NewFetchCommand() *cobra.Command {
 
 // args must be equal to length 1. This is ensured by cobra
 func fetchStore(cmd *cobra.Command, args []string) error {
-	fetcher := di.InitialiseStoreFetcher(io.New(cmd.InOrStdin(), cmd.OutOrStdout(), cmd.ErrOrStderr()))
+	fetcher := di.InitialiseStoreFetcher(ioFromCommand(cmd))
 
 	return fetcher.Fetch(cmd.Context(), args[0])
 }

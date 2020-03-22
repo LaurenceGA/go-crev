@@ -1,8 +1,7 @@
 package verifier
 
 import (
-	"os"
-
+	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/mod"
 
 	"github.com/jedib0t/go-pretty/table"
@@ -12,14 +11,16 @@ type ModLister interface {
 	List() ([]*mod.Module, error)
 }
 
-func New(modLister ModLister) *Verifier {
+func New(modLister ModLister, commandIO *io.IO) *Verifier {
 	return &Verifier{
 		modLister: modLister,
+		commandIO: commandIO,
 	}
 }
 
 type Verifier struct {
 	modLister ModLister
+	commandIO *io.IO
 }
 
 type Verification struct {
@@ -59,7 +60,7 @@ func (v *Verifier) createVerifications(allModules []*mod.Module) []*Verification
 func (v *Verifier) writeVerifications(verifications []*Verification) {
 	t := table.NewWriter()
 	t.AppendHeader(table.Row{"Package", "Version"})
-	t.SetOutputMirror(os.Stdout)
+	t.SetOutputMirror(v.commandIO.Out())
 	t.SetStyle(table.StyleLight)
 
 	for _, ver := range verifications {

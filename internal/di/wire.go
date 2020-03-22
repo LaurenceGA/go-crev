@@ -26,7 +26,7 @@ func InitialiseStoreFetcher(commandIO *io.IO) *store.Fetcher {
 	))
 }
 
-func InitialiseVerifier() *verifier.Verifier {
+func InitialiseVerifier(commandIO *io.IO) *verifier.Verifier {
 	panic(wire.Build(
 		verifier.New,
 

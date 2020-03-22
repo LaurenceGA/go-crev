@@ -23,8 +23,8 @@ func InitialiseStoreFetcher(commandIO *io.IO) *store.Fetcher {
 	return fetcher
 }
 
-func InitialiseVerifier() *verifier.Verifier {
+func InitialiseVerifier(commandIO *io.IO) *verifier.Verifier {
 	lister := mod.NewLister()
-	verifierVerifier := verifier.New(lister)
+	verifierVerifier := verifier.New(lister, commandIO)
 	return verifierVerifier
 }

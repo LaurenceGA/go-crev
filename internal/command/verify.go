@@ -16,7 +16,7 @@ func NewVerifyCommand() *cobra.Command {
 }
 
 func verifyCurrentPackage(cmd *cobra.Command, args []string) error {
-	verifier := di.InitialiseVerifier()
+	verifier := di.InitialiseVerifier(ioFromCommand(cmd))
 
 	return verifier.Verify()
 }
