@@ -1,8 +1,6 @@
 package verifier
 
 import (
-	"fmt"
-
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/mod"
 
@@ -59,9 +57,8 @@ func (v *Verifier) createVerifications(allModules []*mod.Module) []*Verification
 
 		linesOfCode, err := v.lineCounter.CountLines(m.Dir)
 		if err != nil {
-			//TODO return actual err
-			fmt.Println(err)
-
+			// Swallow error and move on to allow partial errors
+			// Should log warning for error here...
 			linesOfCode = -1
 		}
 
