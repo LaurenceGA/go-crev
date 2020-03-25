@@ -2,6 +2,7 @@ package mod
 
 import (
 	"encoding/json"
+	"io"
 	"time"
 )
 
@@ -30,7 +31,11 @@ func (l *Lister) List() ([]*Module, error) {
 
 		err := dec.Decode(&v)
 		if err != nil {
-			return modules, nil
+			if err == io.EOF {
+				return modules, nil
+			}
+
+			return nil, err
 		}
 
 		modules = append(modules, &v)

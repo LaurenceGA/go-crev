@@ -1,0 +1,7 @@
+{
+    "Path": "mod/path",
+    "Main": false,
+    "Dir": "some/directory",
+    "GoMod": "/some/mod/file/go.mod",
+    "GoVersion": "1.14"
+}
