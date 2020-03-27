@@ -2,7 +2,7 @@ package verifier
 
 import (
 	"github.com/LaurenceGA/go-crev/internal/command/io"
-	"github.com/LaurenceGA/go-crev/internal/mod"
+	"github.com/LaurenceGA/go-crev/mod"
 
 	"github.com/jedib0t/go-pretty/table"
 )

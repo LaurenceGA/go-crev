@@ -7,10 +7,10 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
-	"github.com/LaurenceGA/go-crev/internal/mod"
 	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/LaurenceGA/go-crev/internal/verifier"
 	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
+	"github.com/LaurenceGA/go-crev/mod"
 	"github.com/google/wire"
 )
 
