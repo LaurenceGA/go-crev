@@ -10,13 +10,26 @@ import (
 	"log"
 	"time"
 
+	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 )
 
 const thisRepo = "github.com/LaurenceGA/go-crev"
 
+func Check() {
+	mg.Deps(Test, Lint)
+}
+
+func Test() error {
+	return sh.RunV(mg.GoCmd(), "test", "./...")
+}
+
+func Lint() error {
+	return sh.RunV("golangci-lint", "run")
+}
+
 func Build() error {
-	return sh.RunV("go", "build", "-ldflags", ldFlagsArg(), thisRepo+"/cmd/gocrev")
+	return sh.RunV(mg.GoCmd(), "build", "-ldflags", ldFlagsArg(), thisRepo+"/cmd/gocrev")
 }
 
 func ldFlagsArg() string {
