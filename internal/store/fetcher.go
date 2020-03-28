@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 
 	"github.com/LaurenceGA/go-crev/internal/git"
-	"github.com/LaurenceGA/go-crev/meta"
 	giturls "github.com/whilp/git-urls"
 )
 
@@ -15,7 +14,7 @@ type GitCloner interface {
 }
 
 type FileDirs interface {
-	Cache() string
+	Cache() (string, error)
 }
 
 func NewFetcher(cloner GitCloner, fileDirs FileDirs) *Fetcher {
@@ -31,18 +30,26 @@ type Fetcher struct {
 }
 
 const (
-	cacheDir    = "store"
-	cacheGitDir = "git"
+	storeCacheDir = "store"
+	cacheGitDir   = "git"
 )
 
 // Fetch will download a store from a URL to the cache.
 func (f *Fetcher) Fetch(ctx context.Context, fetchURL string) error {
 	repoPath, err := pathFromRepoURL(fetchURL)
 	if err != nil {
-		return fmt.Errorf("cloning git repo: %w", err)
+		return fmt.Errorf("converting URL '%s' into path: %w", fetchURL, err)
 	}
 
-	if _, err := f.gitCloner.Clone(ctx, fetchURL, filepath.Join(f.cacheDir(), repoPath)); err != nil {
+	cacheDir, err := f.cacheDir()
+	if err != nil {
+		return fmt.Errorf("finding cache directory: %w", err)
+	}
+
+	cloneDir := filepath.Join(cacheDir, repoPath)
+	fmt.Printf("Cloning into %s\n", cloneDir)
+
+	if _, err := f.gitCloner.Clone(ctx, fetchURL, cloneDir); err != nil {
 		return fmt.Errorf("cloning git repo: %w", err)
 	}
 
@@ -58,6 +65,11 @@ func pathFromRepoURL(repoURL string) (string, error) {
 	return filepath.FromSlash(filepath.Join(u.Hostname(), u.EscapedPath())), nil
 }
 
-func (f *Fetcher) cacheDir() string {
-	return filepath.Join(f.fileDirs.Cache(), meta.AppName, cacheDir, cacheGitDir)
+func (f *Fetcher) cacheDir() (string, error) {
+	cacheDir, err := f.fileDirs.Cache()
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Join(cacheDir, storeCacheDir, cacheGitDir), nil
 }
