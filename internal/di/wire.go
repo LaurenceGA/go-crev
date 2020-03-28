@@ -24,6 +24,7 @@ func InitialiseStoreFetcher(commandIO *io.IO) *store.Fetcher {
 
 		wire.Bind(new(store.FileDirs), new(*files.Filesystem)),
 		files.NewFilesystem,
+		files.NewUserScope,
 	))
 }
 

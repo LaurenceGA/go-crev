@@ -35,7 +35,19 @@ func (s *FetcherSuite) TestFailToClone() {
 		Return(nil, errors.New("failed to clone"))
 
 	mockFileDirs := mocks.NewMockFileDirs(s.controller)
-	mockFileDirs.EXPECT().Cache().Return("cache")
+	mockFileDirs.EXPECT().Cache().Return("cache", nil)
+
+	fetcher := NewFetcher(mockGitCloner, mockFileDirs)
+
+	err := fetcher.Fetch(context.Background(), "")
+
+	s.Error(err)
+}
+
+func (s *FetcherSuite) TestFailToFindCloneDir() {
+	mockGitCloner := mocks.NewMockGitCloner(s.controller)
+	mockFileDirs := mocks.NewMockFileDirs(s.controller)
+	mockFileDirs.EXPECT().Cache().Return("", errors.New("no filesystem"))
 
 	fetcher := NewFetcher(mockGitCloner, mockFileDirs)
 
@@ -51,7 +63,7 @@ func (s *FetcherSuite) TestCloneSuccess() {
 		Return(nil, nil)
 
 	mockFileDirs := mocks.NewMockFileDirs(s.controller)
-	mockFileDirs.EXPECT().Cache().Return("cache")
+	mockFileDirs.EXPECT().Cache().Return("cache", nil)
 
 	fetcher := NewFetcher(mockGitCloner, mockFileDirs)
 

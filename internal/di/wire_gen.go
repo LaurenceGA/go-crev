@@ -19,7 +19,8 @@ import (
 
 func InitialiseStoreFetcher(commandIO *io.IO) *store.Fetcher {
 	client := git.NewClient(commandIO)
-	filesystem := files.NewFilesystem()
+	scope := files.NewUserScope()
+	filesystem := files.NewFilesystem(scope)
 	fetcher := store.NewFetcher(client, filesystem)
 	return fetcher
 }
