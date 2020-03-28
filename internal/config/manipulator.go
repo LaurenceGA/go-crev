@@ -80,3 +80,25 @@ func (m *Manipulator) SetCurrentStore(path string) error {
 
 	return m.Save(config)
 }
+
+func (m *Manipulator) CurrentID() (string, error) {
+	config, err := m.Load()
+	if err != nil {
+		return "", err
+	}
+
+	return config.CurrentID, nil
+}
+
+func (m *Manipulator) SetCurrentID(id string) error {
+	config, err := m.Load()
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Setting current ID to %s\n", id)
+
+	config.CurrentID = id
+
+	return m.Save(config)
+}

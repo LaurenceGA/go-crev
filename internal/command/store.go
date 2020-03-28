@@ -1,6 +1,8 @@
 package command
 
 import (
+	"fmt"
+
 	"github.com/LaurenceGA/go-crev/internal/di"
 	"github.com/spf13/cobra"
 )
@@ -12,7 +14,8 @@ func NewStoreCommand() *cobra.Command {
 	}
 
 	storeCmd.AddCommand(NewFetchCommand())
-	storeCmd.AddCommand(NewSetCurrnetCommand())
+	storeCmd.AddCommand(NewSetCurrentStoreCommand())
+	storeCmd.AddCommand(NewShowCurrentStoreCommand())
 
 	return storeCmd
 }
@@ -37,7 +40,7 @@ func fetchStore(cmd *cobra.Command, args []string) error {
 
 const expectedSetCurrentStoreArguments = 1
 
-func NewSetCurrnetCommand() *cobra.Command {
+func NewSetCurrentStoreCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "set-current <path>",
 		Short: "Set the current user proof store",
@@ -51,4 +54,27 @@ func setCurrentStore(cmd *cobra.Command, args []string) error {
 	configManipulator := di.InitialiseConfigManipulator()
 
 	return configManipulator.SetCurrentStore(args[0])
+}
+
+func NewShowCurrentStoreCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "current",
+		Short: "Show the current user proof store",
+		RunE:  showCurrentStore,
+	}
+}
+
+func showCurrentStore(cmd *cobra.Command, args []string) error {
+	configManipulator := di.InitialiseConfigManipulator()
+
+	curStore, err := configManipulator.CurrentStore()
+	if err != nil {
+		return err
+	}
+
+	if curStore != "" {
+		fmt.Fprintln(cmd.OutOrStdout(), curStore)
+	}
+
+	return nil
 }

@@ -26,6 +26,7 @@ This is version %s, built at %s
 	}
 
 	rootCmd.AddCommand(NewStoreCommand())
+	rootCmd.AddCommand(NewIDCommand())
 	rootCmd.AddCommand(NewVerifyCommand())
 
 	rootCmd.SetIn(commandIO.In())
