@@ -1,6 +1,8 @@
 package command
 
 import (
+	"fmt"
+
 	"github.com/LaurenceGA/go-crev/internal/di"
 	"github.com/spf13/cobra"
 )
@@ -12,6 +14,7 @@ func NewStoreCommand() *cobra.Command {
 	}
 
 	storeCmd.AddCommand(NewFetchCommand())
+	storeCmd.AddCommand(NewSetCurrnetCommand())
 
 	return storeCmd
 }
@@ -32,4 +35,31 @@ func fetchStore(cmd *cobra.Command, args []string) error {
 	fetcher := di.InitialiseStoreFetcher(ioFromCommand(cmd))
 
 	return fetcher.Fetch(cmd.Context(), args[0])
+}
+
+const expectedSetCurrentStoreArguments = 1
+
+func NewSetCurrnetCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "set-current <path>",
+		Short: "Set the current user proof store",
+		RunE:  setCurrentStore,
+		Args:  cobra.ExactArgs(expectedSetCurrentStoreArguments),
+	}
+}
+
+// args must be equal to length 1. This is ensured by cobra
+func setCurrentStore(cmd *cobra.Command, args []string) error {
+	configManipulator := di.InitialiseConfigManipulator()
+
+	config, err := configManipulator.Load()
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Setting current store to %s\n", args[0])
+
+	config.CurrentStore = args[0]
+
+	return configManipulator.Save(config)
 }

@@ -7,6 +7,7 @@ package di
 
 import (
 	"github.com/LaurenceGA/go-crev/internal/command/io"
+	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/store"
@@ -31,4 +32,11 @@ func InitialiseVerifier(commandIO *io.IO) *verifier.Verifier {
 	counter := cloc.New()
 	verifierVerifier := verifier.New(commandIO, lister, counter)
 	return verifierVerifier
+}
+
+func InitialiseConfigManipulator() *config.Manipulator {
+	scope := files.NewUserScope()
+	filesystem := files.NewFilesystem(scope)
+	manipulator := config.NewManipulator(filesystem)
+	return manipulator
 }
