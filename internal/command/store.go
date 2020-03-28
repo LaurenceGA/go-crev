@@ -1,8 +1,6 @@
 package command
 
 import (
-	"fmt"
-
 	"github.com/LaurenceGA/go-crev/internal/di"
 	"github.com/spf13/cobra"
 )
@@ -52,14 +50,5 @@ func NewSetCurrnetCommand() *cobra.Command {
 func setCurrentStore(cmd *cobra.Command, args []string) error {
 	configManipulator := di.InitialiseConfigManipulator()
 
-	config, err := configManipulator.Load()
-	if err != nil {
-		return err
-	}
-
-	fmt.Printf("Setting current store to %s\n", args[0])
-
-	config.CurrentStore = args[0]
-
-	return configManipulator.Save(config)
+	return configManipulator.SetCurrentStore(args[0])
 }

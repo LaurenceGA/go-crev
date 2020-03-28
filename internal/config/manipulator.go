@@ -58,3 +58,25 @@ func (m *Manipulator) Save(conf *Configuration) error {
 
 	return nil
 }
+
+func (m *Manipulator) CurrentStore() (string, error) {
+	config, err := m.Load()
+	if err != nil {
+		return "", err
+	}
+
+	return config.CurrentStore, nil
+}
+
+func (m *Manipulator) SetCurrentStore(path string) error {
+	config, err := m.Load()
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Setting current store to %s\n", path)
+
+	config.CurrentStore = path
+
+	return m.Save(config)
+}
