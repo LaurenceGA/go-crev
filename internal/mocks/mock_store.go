@@ -72,17 +72,17 @@ func (m *MockFileDirs) EXPECT() *MockFileDirsMockRecorder {
 	return m.recorder
 }
 
-// Cache mocks base method
-func (m *MockFileDirs) Cache() (string, error) {
+// Data mocks base method
+func (m *MockFileDirs) Data() (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Cache")
+	ret := m.ctrl.Call(m, "Data")
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Cache indicates an expected call of Cache
-func (mr *MockFileDirsMockRecorder) Cache() *gomock.Call {
+// Data indicates an expected call of Data
+func (mr *MockFileDirsMockRecorder) Data() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Cache", reflect.TypeOf((*MockFileDirs)(nil).Cache))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Data", reflect.TypeOf((*MockFileDirs)(nil).Data))
 }

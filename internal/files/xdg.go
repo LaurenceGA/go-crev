@@ -2,6 +2,8 @@
 package files
 
 import (
+	"errors"
+
 	"github.com/LaurenceGA/go-crev/meta"
 	gap "github.com/muesli/go-app-paths"
 )
@@ -20,6 +22,15 @@ type Filesystem struct {
 	scope *gap.Scope
 }
 
-func (f *Filesystem) Cache() (string, error) {
-	return f.scope.CacheDir()
+func (f *Filesystem) Data() (string, error) {
+	dataDirs, err := f.scope.DataDirs()
+	if err != nil {
+		return "", err
+	}
+
+	if len(dataDirs) == 0 {
+		return "", errors.New("couldn't find a single data directory")
+	}
+
+	return dataDirs[0], nil
 }

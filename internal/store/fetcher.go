@@ -14,7 +14,7 @@ type GitCloner interface {
 }
 
 type FileDirs interface {
-	Cache() (string, error)
+	Data() (string, error)
 }
 
 func NewFetcher(cloner GitCloner, fileDirs FileDirs) *Fetcher {
@@ -30,8 +30,8 @@ type Fetcher struct {
 }
 
 const (
-	storeCacheDir = "store"
-	cacheGitDir   = "git"
+	storeDataDir = "store"
+	storeGitDir  = "git"
 )
 
 // Fetch will download a store from a URL to the cache.
@@ -41,12 +41,12 @@ func (f *Fetcher) Fetch(ctx context.Context, fetchURL string) error {
 		return fmt.Errorf("converting URL '%s' into path: %w", fetchURL, err)
 	}
 
-	cacheDir, err := f.cacheDir()
+	dataDir, err := f.dataDir()
 	if err != nil {
-		return fmt.Errorf("finding cache directory: %w", err)
+		return fmt.Errorf("finding data directory: %w", err)
 	}
 
-	cloneDir := filepath.Join(cacheDir, repoPath)
+	cloneDir := filepath.Join(dataDir, repoPath)
 	fmt.Printf("Cloning into %s\n", cloneDir)
 
 	if _, err := f.gitCloner.Clone(ctx, fetchURL, cloneDir); err != nil {
@@ -65,11 +65,11 @@ func pathFromRepoURL(repoURL string) (string, error) {
 	return filepath.FromSlash(filepath.Join(u.Hostname(), u.EscapedPath())), nil
 }
 
-func (f *Fetcher) cacheDir() (string, error) {
-	cacheDir, err := f.fileDirs.Cache()
+func (f *Fetcher) dataDir() (string, error) {
+	dataDir, err := f.fileDirs.Data()
 	if err != nil {
 		return "", err
 	}
 
-	return filepath.Join(cacheDir, storeCacheDir, cacheGitDir), nil
+	return filepath.Join(dataDir, storeDataDir, storeGitDir), nil
 }
