@@ -2,7 +2,6 @@
 package files
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -31,10 +30,7 @@ func (f *Filesystem) Data() (string, error) {
 		return "", err
 	}
 
-	if len(dataDirs) == 0 {
-		return "", errors.New("couldn't find a single data directory")
-	}
-
+	// dataDirs is guaranteed to be of at least length 1
 	return dataDirs[0], nil
 }
 
