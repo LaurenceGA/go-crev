@@ -15,8 +15,22 @@ func NewIDCommand() *cobra.Command {
 
 	idCmd.AddCommand(NewSetCurrentIDCommand())
 	idCmd.AddCommand(NewShowCurrentIDCommand())
+	idCmd.AddCommand(NewCreateNewIDCommand())
 
 	return idCmd
+}
+
+func NewCreateNewIDCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "new",
+		Short: "Create a new CrevID",
+		RunE:  createNewID,
+	}
+}
+
+// args must be equal to length 1. This is ensured by cobra
+func createNewID(cmd *cobra.Command, args []string) error {
+	panic("Implement me")
 }
 
 const expectedSetCurrentIDArguments = 1
