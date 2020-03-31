@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/LaurenceGA/go-crev/internal/di"
+	"github.com/LaurenceGA/go-crev/internal/id"
 	"github.com/spf13/cobra"
 )
 
@@ -48,7 +49,9 @@ func NewSetCurrentIDCommand() *cobra.Command {
 func setCurrentID(cmd *cobra.Command, args []string) error {
 	configManipulator := di.InitialiseConfigManipulator()
 
-	return configManipulator.SetCurrentID(args[0])
+	return configManipulator.SetCurrentID(&id.ID{
+		ID: args[0],
+	})
 }
 
 func NewShowCurrentIDCommand() *cobra.Command {
@@ -67,8 +70,13 @@ func showCurrentID(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if curID != "" {
-		fmt.Fprintln(cmd.OutOrStdout(), curID)
+	if curID != nil {
+		fmt.Fprintln(cmd.OutOrStdout(), "ID: "+curID.ID)
+		fmt.Fprintln(cmd.OutOrStdout(), "Type: "+curID.Type)
+
+		if curID.URL != nil {
+			fmt.Fprintln(cmd.OutOrStdout(), "URL: "+curID.URL.String())
+		}
 	}
 
 	return nil

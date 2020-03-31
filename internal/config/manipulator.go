@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"github.com/LaurenceGA/go-crev/internal/id"
 	"gopkg.in/yaml.v2"
 )
 
@@ -81,16 +82,16 @@ func (m *Manipulator) SetCurrentStore(path string) error {
 	return m.Save(config)
 }
 
-func (m *Manipulator) CurrentID() (string, error) {
+func (m *Manipulator) CurrentID() (*id.ID, error) {
 	config, err := m.Load()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	return config.CurrentID, nil
 }
 
-func (m *Manipulator) SetCurrentID(id string) error {
+func (m *Manipulator) SetCurrentID(id *id.ID) error {
 	config, err := m.Load()
 	if err != nil {
 		return err

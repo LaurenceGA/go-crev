@@ -11,7 +11,7 @@ const (
 )
 
 type ID struct {
-	ID   string       `json:"id"`
-	Type CrevIdentity `json:"id-type"`
-	URL  *url.URL     `json:"url"`
+	ID   string       `yaml:"id,omitempty"`
+	Type CrevIdentity `yaml:"id-type,omitempty"`
+	URL  *url.URL     `yaml:"url,omitempty"`
 }
