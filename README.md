@@ -27,4 +27,4 @@ Typically a git repository.
 
 ### CrevID
 Every user/entity has their own identity.
-This is tied to every proofs they create.
+This is tied to every proof they create.
