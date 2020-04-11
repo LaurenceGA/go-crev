@@ -24,12 +24,12 @@ func (s *RootTestSuite) TestRootCommands() {
 		{
 			name:        "base command",
 			args:        []string{},
-			expectError: true,
+			expectError: false,
 		},
 		{
 			name:        "plain store",
 			args:        []string{"store"},
-			expectError: true,
+			expectError: false,
 		},
 		{
 			name:        "invalid command",
