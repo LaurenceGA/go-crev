@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/LaurenceGA/go-crev/internal/di"
-	"github.com/LaurenceGA/go-crev/internal/id"
 	"github.com/spf13/cobra"
 )
 
@@ -38,7 +37,7 @@ const expectedSetCurrentIDArguments = 1
 
 func NewSetCurrentIDCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "set-current <path>",
+		Use:   "set-current <Github username>",
 		Short: "Set the current user ID",
 		RunE:  setCurrentID,
 		Args:  cobra.ExactArgs(expectedSetCurrentIDArguments),
@@ -47,11 +46,9 @@ func NewSetCurrentIDCommand() *cobra.Command {
 
 // args must be equal to length 1. This is ensured by cobra
 func setCurrentID(cmd *cobra.Command, args []string) error {
-	configManipulator := di.InitialiseConfigManipulator()
+	setCurrentIDFlow := di.InitialiseIDSetterFlow()
 
-	return configManipulator.SetCurrentID(&id.ID{
-		ID: args[0],
-	})
+	return setCurrentIDFlow.SetFromUsername(cmd.Context(), args[0])
 }
 
 func NewShowCurrentIDCommand() *cobra.Command {

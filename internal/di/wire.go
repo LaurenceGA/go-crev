@@ -4,12 +4,14 @@
 package di
 
 import (
+	"github.com/LaurenceGA/go-crev/internal/command/flow"
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/LaurenceGA/go-crev/internal/verifier"
+	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
 	"github.com/LaurenceGA/go-crev/mod"
 	"github.com/google/wire"
@@ -44,11 +46,17 @@ func InitialiseVerifier(commandIO *io.IO) *verifier.Verifier {
 }
 
 func InitialiseConfigManipulator() *config.Manipulator {
-	panic(wire.Build(
-		config.NewManipulator,
+	panic(wire.Build(config.ConfigManipulatorProvider))
+}
 
-		wire.Bind(new(config.FileFinder), new(*files.Filesystem)),
-		files.NewFilesystem,
-		files.NewUserScope,
+func InitialiseIDSetterFlow() *flow.IDSetter {
+	panic(wire.Build(
+		flow.NewIDSetter,
+
+		wire.Bind(new(flow.ConfigManipulator), new(*config.Manipulator)),
+		config.ConfigManipulatorProvider,
+
+		wire.Bind(new(flow.GithubUser), new(*github.Client)),
+		github.NewClient,
 	))
 }

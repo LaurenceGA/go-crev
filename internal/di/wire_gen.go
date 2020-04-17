@@ -6,10 +6,12 @@
 package di
 
 import (
+	"github.com/LaurenceGA/go-crev/internal/command/flow"
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
+	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/LaurenceGA/go-crev/internal/verifier"
 	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
@@ -39,4 +41,13 @@ func InitialiseConfigManipulator() *config.Manipulator {
 	filesystem := files.NewFilesystem(scope)
 	manipulator := config.NewManipulator(filesystem)
 	return manipulator
+}
+
+func InitialiseIDSetterFlow() *flow.IDSetter {
+	scope := files.NewUserScope()
+	filesystem := files.NewFilesystem(scope)
+	manipulator := config.NewManipulator(filesystem)
+	client := github.NewClient()
+	idSetter := flow.NewIDSetter(manipulator, client)
+	return idSetter
 }
