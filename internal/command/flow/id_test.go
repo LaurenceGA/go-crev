@@ -85,9 +85,9 @@ func runIDFlowTestCase(testCase idFlowTestCase) func(*testing.T) {
 	return func(t *testing.T) {
 		controller := gomock.NewController(t)
 		mockConfigManipulator := mocks.NewMockConfigManipulator(controller)
-		mockGithubUser := mocks.NewMockGithubUser(controller)
+		mockGithub := mocks.NewMockGithub(controller)
 
-		mockGithubUser.EXPECT().
+		mockGithub.EXPECT().
 			GetUser(gomock.Any(), testCase.getUserMock.expectedInput).
 			Return(testCase.getUserMock.usr, testCase.getUserMock.err)
 
@@ -97,7 +97,7 @@ func runIDFlowTestCase(testCase idFlowTestCase) func(*testing.T) {
 				Return(testCase.mockSetIDError)
 		}
 
-		idSetterFlow := NewIDSetter(mockConfigManipulator, mockGithubUser)
+		idSetterFlow := NewIDSetter(mockConfigManipulator, mockGithub)
 
 		err := idSetterFlow.SetFromUsername(context.Background(), testCase.inputUsername)
 

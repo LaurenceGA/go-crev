@@ -9,9 +9,9 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
+	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/LaurenceGA/go-crev/internal/verifier"
-	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
 	"github.com/LaurenceGA/go-crev/mod"
 	"github.com/google/wire"
@@ -56,7 +56,7 @@ func InitialiseIDSetterFlow() *flow.IDSetter {
 		wire.Bind(new(flow.ConfigManipulator), new(*config.Manipulator)),
 		config.ConfigManipulatorProvider,
 
-		wire.Bind(new(flow.GithubUser), new(*github.Client)),
+		wire.Bind(new(flow.Github), new(*github.Client)),
 		github.NewClient,
 	))
 }
