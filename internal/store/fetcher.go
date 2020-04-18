@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/LaurenceGA/go-crev/internal/git"
 	giturls "github.com/whilp/git-urls"
@@ -56,13 +57,25 @@ func (f *Fetcher) Fetch(ctx context.Context, fetchURL string) error {
 	return nil
 }
 
+const gitProtocolURLExtension = ".git"
+
 func pathFromRepoURL(repoURL string) (string, error) {
+	repoURL = strings.TrimSuffix(repoURL, gitProtocolURLExtension)
+
 	u, err := giturls.Parse(repoURL)
 	if err != nil {
 		return "", fmt.Errorf("parsing repo URL %s: %w", repoURL, err)
 	}
 
-	return filepath.FromSlash(filepath.Join(u.Hostname(), u.EscapedPath())), nil
+	rawHostnamePath := filepath.Join(u.Hostname(), u.EscapedPath())
+	if rawHostnamePath == "" {
+		// Rootless paths (E.G. git:example.com/repo) are considered opaque, so we just use that
+		rawHostnamePath = u.Opaque
+	}
+
+	hostnamePath := strings.TrimPrefix(rawHostnamePath, "/") // Must be relative
+
+	return filepath.FromSlash(hostnamePath), nil
 }
 
 func (f *Fetcher) dataDir() (string, error) {
