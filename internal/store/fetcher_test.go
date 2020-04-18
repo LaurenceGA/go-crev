@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"errors"
+	"path/filepath"
 	"testing"
 
 	"github.com/LaurenceGA/go-crev/internal/mocks"
@@ -70,4 +71,69 @@ func (s *FetcherSuite) TestCloneSuccess() {
 	err := fetcher.Fetch(context.Background(), "")
 
 	s.NoError(err)
+}
+
+func (s *FetcherSuite) TestURLToPath() {
+	for _, tt := range []struct {
+		name, url, expectedPath string
+	}{
+		{
+			name:         "raw URL",
+			url:          "plain",
+			expectedPath: "plain",
+		},
+		{
+			name:         "a slash",
+			url:          "parent/child",
+			expectedPath: filepath.Join("parent", "child"),
+		},
+		{
+			name:         "with protocol, only hostname",
+			url:          "https://example",
+			expectedPath: "example",
+		},
+		{
+			name:         "with protocol, hostname and path",
+			url:          "https://example.com/path",
+			expectedPath: filepath.Join("example.com", "path"),
+		},
+		{
+			name:         "longer path",
+			url:          "https://example.com/one/two/three",
+			expectedPath: filepath.Join("example.com", "one", "two", "three"),
+		},
+		{
+			name:         "git protocol",
+			url:          "git:git.example.com/octocat/Hello-World",
+			expectedPath: filepath.Join("git.example.com", "octocat", "Hello-World"),
+		},
+		{
+			name:         "SSH protocol",
+			url:          "git@github.com:octocat/Hello-World.git",
+			expectedPath: filepath.Join("github.com", "octocat", "Hello-World"),
+		},
+		{
+			name:         "longer SSH protocol",
+			url:          "ssh://server/project.git",
+			expectedPath: filepath.Join("server", "project"),
+		},
+		{
+			name:         "local file",
+			url:          "/srv/git/project.git",
+			expectedPath: filepath.Join("srv", "git", "project"),
+		},
+		{
+			name:         "longer local file",
+			url:          "file:///srv/git/project.git",
+			expectedPath: filepath.Join("srv", "git", "project"),
+		},
+	} {
+		tt := tt
+		s.Run(tt.name, func() {
+			path, err := pathFromRepoURL(tt.url)
+			s.NoError(err) // Effectively never returns an error, so we won't test it
+
+			s.Equal(tt.expectedPath, path)
+		})
+	}
 }
