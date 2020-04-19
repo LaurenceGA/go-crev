@@ -2,6 +2,7 @@ package fetcher
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -52,6 +53,12 @@ func (f *Fetcher) Fetch(ctx context.Context, fetchURL string) (*store.ProofStore
 	fmt.Printf("Cloning into %s\n", cloneDir)
 
 	if _, err := f.gitCloner.Clone(ctx, fetchURL, cloneDir); err != nil {
+		if errors.Is(err, git.ErrRepositoryAlreadyExists) {
+			return &store.ProofStore{
+				Dir: cloneDir,
+			}, err
+		}
+
 		return nil, fmt.Errorf("cloning git repo: %w", err)
 	}
 

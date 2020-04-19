@@ -97,14 +97,18 @@ func (i *IDSetter) loadExistingStandardRepo(ctx context.Context, owner string) s
 }
 
 func (i *IDSetter) loadRepoAsCurrentStore(ctx context.Context, cloneURL string) {
-	_, err := i.repoFetcher.Fetch(ctx, cloneURL)
+	store, err := i.repoFetcher.Fetch(ctx, cloneURL)
 	if err != nil {
 		if !errors.Is(err, git.ErrRepositoryAlreadyExists) {
 			fmt.Fprintf(i.commandIO.Err(), "Failed trying to clone proof repo: %v\n", err)
+
+			return
 		}
 
 		fmt.Fprintln(i.commandIO.Out(), "It's already there!")
 	}
 
-	// update config with new repo
+	if err := i.configManipulator.SetCurrentStore(store.Dir); err != nil {
+		fmt.Fprintf(i.commandIO.Err(), "Failed to set current store to %s: %v\n", store.Dir, err)
+	}
 }

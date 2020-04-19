@@ -6,7 +6,9 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/mocks"
+	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
 )
@@ -43,6 +45,26 @@ func (s *FetcherSuite) TestFailToClone() {
 	_, err := fetcher.Fetch(context.Background(), "")
 
 	s.Error(err)
+}
+
+func (s *FetcherSuite) TestRepoAlreadyExists() {
+	mockGitCloner := mocks.NewMockGitCloner(s.controller)
+
+	existingStore := &store.ProofStore{Dir: filepath.Join("data", "store", "git", "repo")}
+
+	mockGitCloner.EXPECT().
+		Clone(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(nil, git.ErrRepositoryAlreadyExists)
+
+	mockFileDirs := mocks.NewMockFileDirs(s.controller)
+	mockFileDirs.EXPECT().Data().Return("data", nil)
+
+	fetcher := NewFetcher(mockGitCloner, mockFileDirs)
+
+	store, err := fetcher.Fetch(context.Background(), "repo")
+	s.Error(err)
+	s.True(errors.Is(err, git.ErrRepositoryAlreadyExists), "Returned error should be already exists error")
+	s.Equal(existingStore, store)
 }
 
 func (s *FetcherSuite) TestFailToFindCloneDir() {
