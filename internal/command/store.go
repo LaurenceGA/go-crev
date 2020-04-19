@@ -35,7 +35,9 @@ func NewFetchCommand() *cobra.Command {
 func fetchStore(cmd *cobra.Command, args []string) error {
 	fetcher := di.InitialiseStoreFetcher(ioFromCommand(cmd))
 
-	return fetcher.Fetch(cmd.Context(), args[0])
+	_, err := fetcher.Fetch(cmd.Context(), args[0])
+
+	return err
 }
 
 const expectedSetCurrentStoreArguments = 1

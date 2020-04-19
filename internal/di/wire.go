@@ -9,26 +9,17 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
-	"github.com/LaurenceGA/go-crev/internal/store"
-	"github.com/LaurenceGA/go-crev/internal/verifier"
 	"github.com/LaurenceGA/go-crev/internal/github"
+	"github.com/LaurenceGA/go-crev/internal/store/fetcher"
+	"github.com/LaurenceGA/go-crev/internal/verifier"
 	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
 	"github.com/LaurenceGA/go-crev/mod"
 	"github.com/google/wire"
 )
 
 // InitialiseStoreFetcher create a fetcher for fetching crev proof stores
-func InitialiseStoreFetcher(commandIO *io.IO) *store.Fetcher {
-	panic(wire.Build(
-		store.NewFetcher,
-
-		wire.Bind(new(store.GitCloner), new(*git.Client)),
-		git.NewClient,
-
-		wire.Bind(new(store.FileDirs), new(*files.Filesystem)),
-		files.NewFilesystem,
-		files.NewUserScope,
-	))
+func InitialiseStoreFetcher(commandIO *io.IO) *fetcher.Fetcher {
+	panic(wire.Build(fetcher.FetcherProvider))
 }
 
 func InitialiseVerifier(commandIO *io.IO) *verifier.Verifier {
@@ -46,17 +37,30 @@ func InitialiseVerifier(commandIO *io.IO) *verifier.Verifier {
 }
 
 func InitialiseConfigManipulator() *config.Manipulator {
-	panic(wire.Build(config.ConfigManipulatorProvider))
+	panic(wire.Build(
+		config.ConfigManipulatorProvider,
+	))
 }
 
-func InitialiseIDSetterFlow() *flow.IDSetter {
+func InitialiseIDSetterFlow(commandIO *io.IO) *flow.IDSetter {
 	panic(wire.Build(
 		flow.NewIDSetter,
 
 		wire.Bind(new(flow.ConfigManipulator), new(*config.Manipulator)),
-		config.ConfigManipulatorProvider,
+		config.NewManipulator,
 
-		wire.Bind(new(flow.GithubUser), new(*github.Client)),
+		wire.Bind(new(flow.Github), new(*github.Client)),
 		github.NewClient,
+
+		wire.Bind(new(flow.RepoFetcher), new(*fetcher.Fetcher)),
+		fetcher.NewFetcher,
+
+		wire.Bind(new(fetcher.GitCloner), new(*git.Client)),
+		git.NewClient,
+
+		wire.Bind(new(fetcher.FileDirs), new(*files.Filesystem)),  // Fetcher
+		wire.Bind(new(config.FileFinder), new(*files.Filesystem)), // Config manipulator
+		files.NewFilesystem,
+		files.NewUserScope,
 	))
 }

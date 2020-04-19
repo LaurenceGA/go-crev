@@ -1,12 +1,14 @@
-package store
+package fetcher
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"path/filepath"
 	"strings"
 
 	"github.com/LaurenceGA/go-crev/internal/git"
+	"github.com/LaurenceGA/go-crev/internal/store"
 	giturls "github.com/whilp/git-urls"
 )
 
@@ -36,25 +38,33 @@ const (
 )
 
 // Fetch will download a store from a URL to the cache.
-func (f *Fetcher) Fetch(ctx context.Context, fetchURL string) error {
+func (f *Fetcher) Fetch(ctx context.Context, fetchURL string) (*store.ProofStore, error) {
 	repoPath, err := pathFromRepoURL(fetchURL)
 	if err != nil {
-		return fmt.Errorf("converting URL '%s' into path: %w", fetchURL, err)
+		return nil, fmt.Errorf("converting URL '%s' into path: %w", fetchURL, err)
 	}
 
 	dataDir, err := f.dataDir()
 	if err != nil {
-		return fmt.Errorf("finding data directory: %w", err)
+		return nil, fmt.Errorf("finding data directory: %w", err)
 	}
 
 	cloneDir := filepath.Join(dataDir, repoPath)
 	fmt.Printf("Cloning into %s\n", cloneDir)
 
 	if _, err := f.gitCloner.Clone(ctx, fetchURL, cloneDir); err != nil {
-		return fmt.Errorf("cloning git repo: %w", err)
+		if errors.Is(err, git.ErrRepositoryAlreadyExists) {
+			return &store.ProofStore{
+				Dir: cloneDir,
+			}, err
+		}
+
+		return nil, fmt.Errorf("cloning git repo: %w", err)
 	}
 
-	return nil
+	return &store.ProofStore{
+		Dir: cloneDir,
+	}, nil
 }
 
 const gitProtocolURLExtension = ".git"

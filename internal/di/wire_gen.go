@@ -12,7 +12,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/github"
-	"github.com/LaurenceGA/go-crev/internal/store"
+	"github.com/LaurenceGA/go-crev/internal/store/fetcher"
 	"github.com/LaurenceGA/go-crev/internal/verifier"
 	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
 	"github.com/LaurenceGA/go-crev/mod"
@@ -20,12 +20,12 @@ import (
 
 // Injectors from wire.go:
 
-func InitialiseStoreFetcher(commandIO *io.IO) *store.Fetcher {
+func InitialiseStoreFetcher(commandIO *io.IO) *fetcher.Fetcher {
 	client := git.NewClient(commandIO)
 	scope := files.NewUserScope()
 	filesystem := files.NewFilesystem(scope)
-	fetcher := store.NewFetcher(client, filesystem)
-	return fetcher
+	fetcherFetcher := fetcher.NewFetcher(client, filesystem)
+	return fetcherFetcher
 }
 
 func InitialiseVerifier(commandIO *io.IO) *verifier.Verifier {
@@ -43,11 +43,13 @@ func InitialiseConfigManipulator() *config.Manipulator {
 	return manipulator
 }
 
-func InitialiseIDSetterFlow() *flow.IDSetter {
+func InitialiseIDSetterFlow(commandIO *io.IO) *flow.IDSetter {
 	scope := files.NewUserScope()
 	filesystem := files.NewFilesystem(scope)
 	manipulator := config.NewManipulator(filesystem)
 	client := github.NewClient()
-	idSetter := flow.NewIDSetter(manipulator, client)
+	gitClient := git.NewClient(commandIO)
+	fetcherFetcher := fetcher.NewFetcher(gitClient, filesystem)
+	idSetter := flow.NewIDSetter(commandIO, manipulator, client, fetcherFetcher)
 	return idSetter
 }

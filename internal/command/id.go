@@ -46,7 +46,7 @@ func NewSetCurrentIDCommand() *cobra.Command {
 
 // args must be equal to length 1. This is ensured by cobra
 func setCurrentID(cmd *cobra.Command, args []string) error {
-	setCurrentIDFlow := di.InitialiseIDSetterFlow()
+	setCurrentIDFlow := di.InitialiseIDSetterFlow(ioFromCommand(cmd))
 
 	return setCurrentIDFlow.SetFromUsername(cmd.Context(), args[0])
 }
@@ -71,8 +71,8 @@ func showCurrentID(cmd *cobra.Command, args []string) error {
 		fmt.Fprintln(cmd.OutOrStdout(), "ID: "+curID.ID)
 		fmt.Fprintln(cmd.OutOrStdout(), "Type: "+curID.Type)
 
-		if curID.URL != nil {
-			fmt.Fprintln(cmd.OutOrStdout(), "URL: "+curID.URL.String())
+		if curID.URL != "" {
+			fmt.Fprintln(cmd.OutOrStdout(), "URL: "+curID.URL)
 		}
 	}
 
