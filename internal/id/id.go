@@ -1,7 +1,5 @@
 package id
 
-import "net/url"
-
 type CrevIdentity string
 
 const (
@@ -13,5 +11,5 @@ const (
 type ID struct {
 	ID   string       `yaml:"id,omitempty"`
 	Type CrevIdentity `yaml:"id-type,omitempty"`
-	URL  *url.URL     `yaml:"url,omitempty"`
+	URL  string       `yaml:"url,omitempty"`
 }

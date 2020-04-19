@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/LaurenceGA/go-crev/internal/command/io"
+	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/id"
 )
@@ -23,11 +24,19 @@ type Github interface {
 	GetRepository(context.Context, string, string) (*github.Repository, error)
 }
 
-func NewIDSetter(commandIO *io.IO, configManipulator ConfigManipulator, githubUser Github) *IDSetter {
+type RepoFetcher interface {
+	Fetch(context.Context, string) error
+}
+
+func NewIDSetter(commandIO *io.IO,
+	configManipulator ConfigManipulator,
+	githubUser Github,
+	repoFetcher RepoFetcher) *IDSetter {
 	return &IDSetter{
 		commandIO:         commandIO,
 		configManipulator: configManipulator,
 		githubUser:        githubUser,
+		repoFetcher:       repoFetcher,
 	}
 }
 
@@ -36,6 +45,7 @@ type IDSetter struct {
 	commandIO         *io.IO
 	configManipulator ConfigManipulator
 	githubUser        Github
+	repoFetcher       RepoFetcher
 }
 
 // This is expected to be a well known name
@@ -53,25 +63,46 @@ func (i *IDSetter) SetFromUsername(ctx context.Context, usernameRaw string) erro
 		return fmt.Errorf("getting user: %w", err)
 	}
 
-	repo, err := i.githubUser.GetRepository(ctx, usr.Login, standardCrevProofRepoName)
+	idStoreURL := i.loadExistingStandardRepo(ctx, usr.Login)
+
+	return i.configManipulator.SetCurrentID(&id.ID{
+		ID:   strconv.Itoa(int(usr.ID)),
+		Type: id.Github,
+		URL:  idStoreURL,
+	})
+}
+
+func (i *IDSetter) loadExistingStandardRepo(ctx context.Context, owner string) string {
+	repo, err := i.githubUser.GetRepository(ctx, owner, standardCrevProofRepoName)
 	if err != nil {
 		if errors.Is(err, github.NotFoundError) {
 			fmt.Fprintf(i.commandIO.Out(),
 				"Couldn't find proof repo in Github for %s/%s. You should make one here...\n",
-				usr.Login,
+				owner,
 				standardCrevProofRepoName)
 		} else {
 			// Non-fatal. Just print and move on...
 			fmt.Fprintf(i.commandIO.Err(), "Failed trying to find repository with error: %v\n", err)
 		}
+
+		return "" // No known crev proof URL for ID
 	}
 
-	_ = repo
+	fmt.Fprintln(i.commandIO.Out(), "Found existing proof repo!")
 
-	fmt.Fprintln(i.commandIO.Out(), "Found existing proof repo")
+	i.loadRepoAsCurrentStore(ctx, repo.CloneURL)
 
-	return i.configManipulator.SetCurrentID(&id.ID{
-		ID:   strconv.Itoa(int(usr.ID)),
-		Type: id.Github,
-	})
+	return repo.HTMLurl
+}
+
+func (i *IDSetter) loadRepoAsCurrentStore(ctx context.Context, cloneURL string) {
+	if err := i.repoFetcher.Fetch(ctx, cloneURL); err != nil {
+		if !errors.Is(err, git.ErrRepositoryAlreadyExists) {
+			fmt.Fprintf(i.commandIO.Err(), "Failed trying to clone proof repo: %v\n", err)
+		}
+
+		fmt.Fprintln(i.commandIO.Out(), "It's already there!")
+	}
+
+	// update config with new repo
 }

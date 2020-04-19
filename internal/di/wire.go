@@ -19,16 +19,7 @@ import (
 
 // InitialiseStoreFetcher create a fetcher for fetching crev proof stores
 func InitialiseStoreFetcher(commandIO *io.IO) *store.Fetcher {
-	panic(wire.Build(
-		store.NewFetcher,
-
-		wire.Bind(new(store.GitCloner), new(*git.Client)),
-		git.NewClient,
-
-		wire.Bind(new(store.FileDirs), new(*files.Filesystem)),
-		files.NewFilesystem,
-		files.NewUserScope,
-	))
+	panic(wire.Build(store.FetcherProvider))
 }
 
 func InitialiseVerifier(commandIO *io.IO) *verifier.Verifier {
@@ -46,7 +37,9 @@ func InitialiseVerifier(commandIO *io.IO) *verifier.Verifier {
 }
 
 func InitialiseConfigManipulator() *config.Manipulator {
-	panic(wire.Build(config.ConfigManipulatorProvider))
+	panic(wire.Build(
+		config.ConfigManipulatorProvider,
+	))
 }
 
 func InitialiseIDSetterFlow(commandIO *io.IO) *flow.IDSetter {
@@ -54,9 +47,20 @@ func InitialiseIDSetterFlow(commandIO *io.IO) *flow.IDSetter {
 		flow.NewIDSetter,
 
 		wire.Bind(new(flow.ConfigManipulator), new(*config.Manipulator)),
-		config.ConfigManipulatorProvider,
+		config.NewManipulator,
 
 		wire.Bind(new(flow.Github), new(*github.Client)),
 		github.NewClient,
+
+		wire.Bind(new(flow.RepoFetcher), new(*store.Fetcher)),
+		store.NewFetcher,
+
+		wire.Bind(new(store.GitCloner), new(*git.Client)),
+		git.NewClient,
+
+		wire.Bind(new(store.FileDirs), new(*files.Filesystem)),    // Fetcher
+		wire.Bind(new(config.FileFinder), new(*files.Filesystem)), // Config manipulator
+		files.NewFilesystem,
+		files.NewUserScope,
 	))
 }

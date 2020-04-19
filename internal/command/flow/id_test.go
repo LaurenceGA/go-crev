@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/LaurenceGA/go-crev/internal/command/io"
+	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/id"
 	"github.com/LaurenceGA/go-crev/internal/mocks"
@@ -29,14 +30,26 @@ type getRepoMock struct {
 	err           error
 }
 
+type fetchRepoMock struct {
+	expectedFetchURL string
+	err              error
+}
+
+type setIDMock struct {
+	expectedSetID *id.ID
+	err           error
+}
+
 type idFlowTestCase struct {
-	name           string
-	inputUsername  string
-	getUserMock    getUserMock
-	getRepoMock    getRepoMock
-	mockSetIDError error
-	expectedIDSet  *id.ID
-	expectedError  bool
+	name          string
+	inputUsername string
+	getUserMock   getUserMock
+	getRepoMock   *getRepoMock
+	fetchRepoMock *fetchRepoMock
+	setIDMock     *setIDMock
+	// mockSetIDError error
+	// expectedIDSet  *id.ID
+	expectedError bool
 }
 
 func TestIDFlow(t *testing.T) {
@@ -48,11 +61,12 @@ func TestIDFlow(t *testing.T) {
 				expectedInput: "123",
 				usr:           &github.User{ID: 502, Login: "123"},
 			},
-			getRepoMock: getRepoMock{
+			getRepoMock: &getRepoMock{
 				expectedInput: expectedDefaultRepo("123"),
-				repo:          &github.Repository{},
+				repo:          &github.Repository{CloneURL: "cloneURL", HTMLurl: "htmlURL"},
 			},
-			expectedIDSet: &id.ID{ID: "502", Type: id.Github},
+			fetchRepoMock: &fetchRepoMock{expectedFetchURL: "cloneURL"},
+			setIDMock:     &setIDMock{expectedSetID: githubIDWithURL("502", "htmlURL")},
 		},
 		{
 			name:          "username with @",
@@ -61,11 +75,11 @@ func TestIDFlow(t *testing.T) {
 				expectedInput: "user",
 				usr:           &github.User{ID: 18, Login: "user"},
 			},
-			getRepoMock: getRepoMock{
+			getRepoMock: &getRepoMock{
 				expectedInput: expectedDefaultRepo("user"),
 				err:           github.NotFoundError,
 			},
-			expectedIDSet: &id.ID{ID: "18", Type: id.Github},
+			setIDMock: &setIDMock{expectedSetID: githubID("18")},
 		},
 		{
 			name:          "username with double @",
@@ -74,11 +88,11 @@ func TestIDFlow(t *testing.T) {
 				expectedInput: "@user",
 				usr:           &github.User{ID: 5, Login: "@user"},
 			},
-			getRepoMock: getRepoMock{
+			getRepoMock: &getRepoMock{
 				expectedInput: expectedDefaultRepo("@user"),
 				err:           github.NotFoundError,
 			},
-			expectedIDSet: &id.ID{ID: "5", Type: id.Github},
+			setIDMock: &setIDMock{expectedSetID: githubID("5")},
 		},
 		{
 			name:          "Get user error",
@@ -96,26 +110,64 @@ func TestIDFlow(t *testing.T) {
 				expectedInput: "user",
 				usr:           &github.User{ID: 5, Login: "user"},
 			},
-			getRepoMock: getRepoMock{
+			getRepoMock: &getRepoMock{
 				expectedInput: expectedDefaultRepo("user"),
 				err:           github.NotFoundError,
 			},
-			mockSetIDError: errors.New("failed to update config"),
-			expectedIDSet:  &id.ID{ID: "5", Type: id.Github},
-			expectedError:  true,
+			setIDMock: &setIDMock{
+				expectedSetID: githubID("5"),
+				err:           errors.New("failed to update config"),
+			},
+			expectedError: true,
 		},
 		{
-			name:          "Fail to get repo",
+			name:          "Fail to get repo from github",
 			inputUsername: "user",
 			getUserMock: getUserMock{
 				expectedInput: "user",
 				usr:           &github.User{ID: 5, Login: "user"},
 			},
-			getRepoMock: getRepoMock{
+			getRepoMock: &getRepoMock{
 				expectedInput: expectedDefaultRepo("user"),
 				err:           errors.New("that's a fail"),
 			},
-			expectedIDSet: &id.ID{ID: "5", Type: id.Github},
+			setIDMock:     &setIDMock{expectedSetID: githubID("5")},
+			expectedError: false, // Failing to find repo is non-fatal
+		},
+		{
+			name:          "Repo already exists",
+			inputUsername: "user",
+			getUserMock: getUserMock{
+				expectedInput: "user",
+				usr:           &github.User{ID: 5, Login: "user"},
+			},
+			getRepoMock: &getRepoMock{
+				expectedInput: expectedDefaultRepo("user"),
+				repo:          &github.Repository{CloneURL: "cloneURL", HTMLurl: "htmlURL"},
+			},
+			fetchRepoMock: &fetchRepoMock{
+				expectedFetchURL: "cloneURL",
+				err:              git.ErrRepositoryAlreadyExists,
+			},
+			setIDMock:     &setIDMock{expectedSetID: githubIDWithURL("5", "htmlURL")},
+			expectedError: false, // Failing to find repo is non-fatal
+		},
+		{
+			name:          "Fail to clone repo",
+			inputUsername: "user",
+			getUserMock: getUserMock{
+				expectedInput: "user",
+				usr:           &github.User{ID: 5, Login: "user"},
+			},
+			getRepoMock: &getRepoMock{
+				expectedInput: expectedDefaultRepo("user"),
+				repo:          &github.Repository{CloneURL: "cloneURL", HTMLurl: "htmlURL"},
+			},
+			fetchRepoMock: &fetchRepoMock{
+				expectedFetchURL: "cloneURL",
+				err:              errors.New("That's a fail"),
+			},
+			setIDMock:     &setIDMock{expectedSetID: githubIDWithURL("5", "htmlURL")},
 			expectedError: false, // Failing to find repo is non-fatal
 		},
 	} {
@@ -128,22 +180,31 @@ func runIDFlowTestCase(testCase idFlowTestCase) func(*testing.T) {
 		controller := gomock.NewController(t)
 		mockConfigManipulator := mocks.NewMockConfigManipulator(controller)
 		mockGithub := mocks.NewMockGithub(controller)
+		mockRepoFetcher := mocks.NewMockRepoFetcher(controller)
 
 		mockGithub.EXPECT().
 			GetUser(gomock.Any(), testCase.getUserMock.expectedInput).
 			Return(testCase.getUserMock.usr, testCase.getUserMock.err)
 
-		if testCase.getUserMock.err == nil {
+		if testCase.getRepoMock != nil {
 			mockGithub.EXPECT().
 				GetRepository(gomock.Any(), testCase.getRepoMock.expectedInput.owner, testCase.getRepoMock.expectedInput.repo).
 				Return(testCase.getRepoMock.repo, testCase.getRepoMock.err)
-
-			mockConfigManipulator.EXPECT().
-				SetCurrentID(testCase.expectedIDSet).
-				Return(testCase.mockSetIDError)
 		}
 
-		idSetterFlow := NewIDSetter(&io.IO{}, mockConfigManipulator, mockGithub)
+		if testCase.setIDMock != nil {
+			mockConfigManipulator.EXPECT().
+				SetCurrentID(testCase.setIDMock.expectedSetID).
+				Return(testCase.setIDMock.err)
+		}
+
+		if testCase.fetchRepoMock != nil {
+			mockRepoFetcher.EXPECT().
+				Fetch(gomock.Any(), testCase.fetchRepoMock.expectedFetchURL).
+				Return(testCase.fetchRepoMock.err)
+		}
+
+		idSetterFlow := NewIDSetter(&io.IO{}, mockConfigManipulator, mockGithub, mockRepoFetcher)
 
 		err := idSetterFlow.SetFromUsername(context.Background(), testCase.inputUsername)
 
@@ -161,5 +222,20 @@ func expectedDefaultRepo(owner string) getRepoInput {
 	return getRepoInput{
 		owner: owner,
 		repo:  standardCrevProofRepoName,
+	}
+}
+
+func githubID(githubID string) *id.ID {
+	return &id.ID{
+		ID:   githubID,
+		Type: id.Github,
+	}
+}
+
+func githubIDWithURL(githubID, url string) *id.ID {
+	return &id.ID{
+		ID:   githubID,
+		Type: id.Github,
+		URL:  url,
 	}
 }

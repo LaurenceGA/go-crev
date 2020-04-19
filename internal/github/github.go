@@ -47,7 +47,7 @@ func (c *Client) GetUser(ctx context.Context, login string) (*User, error) {
 }
 
 type Repository struct {
-	CloneURL string
+	HTMLurl, CloneURL string
 }
 
 func (c *Client) GetRepository(ctx context.Context, owner, repo string) (*Repository, error) {
@@ -61,6 +61,7 @@ func (c *Client) GetRepository(ctx context.Context, owner, repo string) (*Reposi
 	}
 
 	return &Repository{
+		HTMLurl:  repository.GetHTMLURL(),
 		CloneURL: repository.GetCloneURL(),
 	}, nil
 }

@@ -71,8 +71,8 @@ func showCurrentID(cmd *cobra.Command, args []string) error {
 		fmt.Fprintln(cmd.OutOrStdout(), "ID: "+curID.ID)
 		fmt.Fprintln(cmd.OutOrStdout(), "Type: "+curID.Type)
 
-		if curID.URL != nil {
-			fmt.Fprintln(cmd.OutOrStdout(), "URL: "+curID.URL.String())
+		if curID.URL != "" {
+			fmt.Fprintln(cmd.OutOrStdout(), "URL: "+curID.URL)
 		}
 	}
 

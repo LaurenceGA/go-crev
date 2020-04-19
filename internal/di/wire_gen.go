@@ -48,6 +48,8 @@ func InitialiseIDSetterFlow(commandIO *io.IO) *flow.IDSetter {
 	filesystem := files.NewFilesystem(scope)
 	manipulator := config.NewManipulator(filesystem)
 	client := github.NewClient()
-	idSetter := flow.NewIDSetter(commandIO, manipulator, client)
+	gitClient := git.NewClient(commandIO)
+	fetcher := store.NewFetcher(gitClient, filesystem)
+	idSetter := flow.NewIDSetter(commandIO, manipulator, client, fetcher)
 	return idSetter
 }
