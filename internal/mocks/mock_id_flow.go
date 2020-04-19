@@ -8,6 +8,7 @@ import (
 	context "context"
 	github "github.com/LaurenceGA/go-crev/internal/github"
 	id "github.com/LaurenceGA/go-crev/internal/id"
+	store "github.com/LaurenceGA/go-crev/internal/store"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -140,11 +141,12 @@ func (m *MockRepoFetcher) EXPECT() *MockRepoFetcherMockRecorder {
 }
 
 // Fetch mocks base method
-func (m *MockRepoFetcher) Fetch(arg0 context.Context, arg1 string) error {
+func (m *MockRepoFetcher) Fetch(arg0 context.Context, arg1 string) (*store.ProofStore, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Fetch", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(*store.ProofStore)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Fetch indicates an expected call of Fetch

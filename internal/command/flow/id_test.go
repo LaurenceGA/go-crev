@@ -10,6 +10,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/id"
 	"github.com/LaurenceGA/go-crev/internal/mocks"
+	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
@@ -32,12 +33,18 @@ type getRepoMock struct {
 
 type fetchRepoMock struct {
 	expectedFetchURL string
+	proofStore       *store.ProofStore
 	err              error
 }
 
 type setIDMock struct {
 	expectedSetID *id.ID
 	err           error
+}
+
+type setStoreMock struct {
+	expectedSetStore string
+	err              error
 }
 
 type idFlowTestCase struct {
@@ -47,8 +54,7 @@ type idFlowTestCase struct {
 	getRepoMock   *getRepoMock
 	fetchRepoMock *fetchRepoMock
 	setIDMock     *setIDMock
-	// mockSetIDError error
-	// expectedIDSet  *id.ID
+	setStoreMock  *setStoreMock
 	expectedError bool
 }
 
@@ -182,27 +188,11 @@ func runIDFlowTestCase(testCase idFlowTestCase) func(*testing.T) {
 		mockGithub := mocks.NewMockGithub(controller)
 		mockRepoFetcher := mocks.NewMockRepoFetcher(controller)
 
-		mockGithub.EXPECT().
-			GetUser(gomock.Any(), testCase.getUserMock.expectedInput).
-			Return(testCase.getUserMock.usr, testCase.getUserMock.err)
-
-		if testCase.getRepoMock != nil {
-			mockGithub.EXPECT().
-				GetRepository(gomock.Any(), testCase.getRepoMock.expectedInput.owner, testCase.getRepoMock.expectedInput.repo).
-				Return(testCase.getRepoMock.repo, testCase.getRepoMock.err)
-		}
-
-		if testCase.setIDMock != nil {
-			mockConfigManipulator.EXPECT().
-				SetCurrentID(testCase.setIDMock.expectedSetID).
-				Return(testCase.setIDMock.err)
-		}
-
-		if testCase.fetchRepoMock != nil {
-			mockRepoFetcher.EXPECT().
-				Fetch(gomock.Any(), testCase.fetchRepoMock.expectedFetchURL).
-				Return(testCase.fetchRepoMock.err)
-		}
+		setGetUserMocks(mockGithub, testCase.getUserMock)
+		setGetRepoMocks(mockGithub, testCase.getRepoMock)
+		setIDSetMocks(mockConfigManipulator, testCase.setIDMock)
+		setStoreSetMocks(mockConfigManipulator, testCase.setStoreMock)
+		setFetchRepoMocks(mockRepoFetcher, testCase.fetchRepoMock)
 
 		idSetterFlow := NewIDSetter(&io.IO{}, mockConfigManipulator, mockGithub, mockRepoFetcher)
 
@@ -215,6 +205,44 @@ func runIDFlowTestCase(testCase idFlowTestCase) func(*testing.T) {
 		}
 
 		controller.Finish()
+	}
+}
+
+func setGetUserMocks(mockGithub *mocks.MockGithub, mockData getUserMock) {
+	mockGithub.EXPECT().
+		GetUser(gomock.Any(), mockData.expectedInput).
+		Return(mockData.usr, mockData.err)
+}
+
+func setGetRepoMocks(mockGithub *mocks.MockGithub, mockData *getRepoMock) {
+	if mockData != nil {
+		mockGithub.EXPECT().
+			GetRepository(gomock.Any(), mockData.expectedInput.owner, mockData.expectedInput.repo).
+			Return(mockData.repo, mockData.err)
+	}
+}
+
+func setIDSetMocks(mockConfigManipulator *mocks.MockConfigManipulator, mockData *setIDMock) {
+	if mockData != nil {
+		mockConfigManipulator.EXPECT().
+			SetCurrentID(mockData.expectedSetID).
+			Return(mockData.err)
+	}
+}
+
+func setStoreSetMocks(mockConfigManipulator *mocks.MockConfigManipulator, mockData *setStoreMock) {
+	if mockData != nil {
+		mockConfigManipulator.EXPECT().
+			SetCurrentStore(mockData.expectedSetStore).
+			Return(mockData.err)
+	}
+}
+
+func setFetchRepoMocks(mockRepoFetcher *mocks.MockRepoFetcher, mockData *fetchRepoMock) {
+	if mockData != nil {
+		mockRepoFetcher.EXPECT().
+			Fetch(gomock.Any(), mockData.expectedFetchURL).
+			Return(mockData.proofStore, mockData.err)
 	}
 }
 

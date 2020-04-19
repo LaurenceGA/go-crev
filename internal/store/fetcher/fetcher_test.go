@@ -1,4 +1,4 @@
-package store
+package fetcher
 
 import (
 	"context"
@@ -40,7 +40,7 @@ func (s *FetcherSuite) TestFailToClone() {
 
 	fetcher := NewFetcher(mockGitCloner, mockFileDirs)
 
-	err := fetcher.Fetch(context.Background(), "")
+	_, err := fetcher.Fetch(context.Background(), "")
 
 	s.Error(err)
 }
@@ -52,7 +52,7 @@ func (s *FetcherSuite) TestFailToFindCloneDir() {
 
 	fetcher := NewFetcher(mockGitCloner, mockFileDirs)
 
-	err := fetcher.Fetch(context.Background(), "")
+	_, err := fetcher.Fetch(context.Background(), "")
 
 	s.Error(err)
 }
@@ -68,9 +68,10 @@ func (s *FetcherSuite) TestCloneSuccess() {
 
 	fetcher := NewFetcher(mockGitCloner, mockFileDirs)
 
-	err := fetcher.Fetch(context.Background(), "")
+	proofStore, err := fetcher.Fetch(context.Background(), "github.com/path")
 
 	s.NoError(err)
+	s.Equal(filepath.Join("data", "store", "git", "github.com", "path"), proofStore.Dir)
 }
 
 func (s *FetcherSuite) TestURLToPath() {

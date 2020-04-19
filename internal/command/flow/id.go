@@ -12,6 +12,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/id"
+	"github.com/LaurenceGA/go-crev/internal/store"
 )
 
 type ConfigManipulator interface {
@@ -25,7 +26,7 @@ type Github interface {
 }
 
 type RepoFetcher interface {
-	Fetch(context.Context, string) error
+	Fetch(context.Context, string) (*store.ProofStore, error)
 }
 
 func NewIDSetter(commandIO *io.IO,
@@ -96,7 +97,8 @@ func (i *IDSetter) loadExistingStandardRepo(ctx context.Context, owner string) s
 }
 
 func (i *IDSetter) loadRepoAsCurrentStore(ctx context.Context, cloneURL string) {
-	if err := i.repoFetcher.Fetch(ctx, cloneURL); err != nil {
+	_, err := i.repoFetcher.Fetch(ctx, cloneURL)
+	if err != nil {
 		if !errors.Is(err, git.ErrRepositoryAlreadyExists) {
 			fmt.Fprintf(i.commandIO.Err(), "Failed trying to clone proof repo: %v\n", err)
 		}

@@ -1,6 +1,6 @@
 //+build wireinject
 
-package store
+package fetcher
 
 import (
 	"github.com/LaurenceGA/go-crev/internal/files"

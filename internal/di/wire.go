@@ -10,7 +10,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/github"
-	"github.com/LaurenceGA/go-crev/internal/store"
+	"github.com/LaurenceGA/go-crev/internal/store/fetcher"
 	"github.com/LaurenceGA/go-crev/internal/verifier"
 	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
 	"github.com/LaurenceGA/go-crev/mod"
@@ -18,8 +18,8 @@ import (
 )
 
 // InitialiseStoreFetcher create a fetcher for fetching crev proof stores
-func InitialiseStoreFetcher(commandIO *io.IO) *store.Fetcher {
-	panic(wire.Build(store.FetcherProvider))
+func InitialiseStoreFetcher(commandIO *io.IO) *fetcher.Fetcher {
+	panic(wire.Build(fetcher.FetcherProvider))
 }
 
 func InitialiseVerifier(commandIO *io.IO) *verifier.Verifier {
@@ -52,13 +52,13 @@ func InitialiseIDSetterFlow(commandIO *io.IO) *flow.IDSetter {
 		wire.Bind(new(flow.Github), new(*github.Client)),
 		github.NewClient,
 
-		wire.Bind(new(flow.RepoFetcher), new(*store.Fetcher)),
-		store.NewFetcher,
+		wire.Bind(new(flow.RepoFetcher), new(*fetcher.Fetcher)),
+		fetcher.NewFetcher,
 
-		wire.Bind(new(store.GitCloner), new(*git.Client)),
+		wire.Bind(new(fetcher.GitCloner), new(*git.Client)),
 		git.NewClient,
 
-		wire.Bind(new(store.FileDirs), new(*files.Filesystem)),    // Fetcher
+		wire.Bind(new(fetcher.FileDirs), new(*files.Filesystem)),  // Fetcher
 		wire.Bind(new(config.FileFinder), new(*files.Filesystem)), // Config manipulator
 		files.NewFilesystem,
 		files.NewUserScope,
