@@ -49,7 +49,7 @@ func InitialiseConfigManipulator() *config.Manipulator {
 	panic(wire.Build(config.ConfigManipulatorProvider))
 }
 
-func InitialiseIDSetterFlow() *flow.IDSetter {
+func InitialiseIDSetterFlow(commandIO *io.IO) *flow.IDSetter {
 	panic(wire.Build(
 		flow.NewIDSetter,
 

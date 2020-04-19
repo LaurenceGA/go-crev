@@ -46,7 +46,7 @@ func NewSetCurrentIDCommand() *cobra.Command {
 
 // args must be equal to length 1. This is ensured by cobra
 func setCurrentID(cmd *cobra.Command, args []string) error {
-	setCurrentIDFlow := di.InitialiseIDSetterFlow()
+	setCurrentIDFlow := di.InitialiseIDSetterFlow(ioFromCommand(cmd))
 
 	return setCurrentIDFlow.SetFromUsername(cmd.Context(), args[0])
 }

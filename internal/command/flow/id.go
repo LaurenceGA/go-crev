@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/id"
 )
@@ -22,8 +23,9 @@ type Github interface {
 	GetRepository(context.Context, string, string) (*github.Repository, error)
 }
 
-func NewIDSetter(configManipulator ConfigManipulator, githubUser Github) *IDSetter {
+func NewIDSetter(commandIO *io.IO, configManipulator ConfigManipulator, githubUser Github) *IDSetter {
 	return &IDSetter{
+		commandIO:         commandIO,
 		configManipulator: configManipulator,
 		githubUser:        githubUser,
 	}
@@ -31,6 +33,7 @@ func NewIDSetter(configManipulator ConfigManipulator, githubUser Github) *IDSett
 
 // IDSetter is responsible for high level flow of setting of a user's ID
 type IDSetter struct {
+	commandIO         *io.IO
 	configManipulator ConfigManipulator
 	githubUser        Github
 }
@@ -53,13 +56,19 @@ func (i *IDSetter) SetFromUsername(ctx context.Context, usernameRaw string) erro
 	repo, err := i.githubUser.GetRepository(ctx, usr.Login, standardCrevProofRepoName)
 	if err != nil {
 		if errors.Is(err, github.NotFoundError) {
-			fmt.Println("No repo!")
+			fmt.Fprintf(i.commandIO.Out(),
+				"Couldn't find proof repo in Github for %s/%s. You should make one here...\n",
+				usr.Login,
+				standardCrevProofRepoName)
 		} else {
-			return fmt.Errorf("getting repository: %w", err)
+			// Non-fatal. Just print and move on...
+			fmt.Fprintf(i.commandIO.Err(), "Failed trying to find repository with error: %v\n", err)
 		}
 	}
 
 	_ = repo
+
+	fmt.Fprintln(i.commandIO.Out(), "Found existing proof repo")
 
 	return i.configManipulator.SetCurrentID(&id.ID{
 		ID:   strconv.Itoa(int(usr.ID)),

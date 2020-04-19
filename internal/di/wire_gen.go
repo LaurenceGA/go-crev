@@ -43,11 +43,11 @@ func InitialiseConfigManipulator() *config.Manipulator {
 	return manipulator
 }
 
-func InitialiseIDSetterFlow() *flow.IDSetter {
+func InitialiseIDSetterFlow(commandIO *io.IO) *flow.IDSetter {
 	scope := files.NewUserScope()
 	filesystem := files.NewFilesystem(scope)
 	manipulator := config.NewManipulator(filesystem)
 	client := github.NewClient()
-	idSetter := flow.NewIDSetter(manipulator, client)
+	idSetter := flow.NewIDSetter(commandIO, manipulator, client)
 	return idSetter
 }
