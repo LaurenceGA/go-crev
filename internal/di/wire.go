@@ -65,7 +65,7 @@ func InitialiseIDSetterFlow(commandIO *io.IO) *idset.IDSetter {
 	))
 }
 
-func InitialiseTrustCreator(commandIO *io.IO) *trust.TrustCreator {
+func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 	panic(wire.Build(
 		trust.NewTrustCreator,
 	))

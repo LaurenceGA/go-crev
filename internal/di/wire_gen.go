@@ -55,7 +55,7 @@ func InitialiseIDSetterFlow(commandIO *io.IO) *idset.IDSetter {
 	return idSetter
 }
 
-func InitialiseTrustCreator(commandIO *io.IO) *trust.TrustCreator {
-	trustCreator := trust.NewTrustCreator(commandIO)
-	return trustCreator
+func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
+	creator := trust.NewTrustCreator(commandIO)
+	return creator
 }
