@@ -1,6 +1,7 @@
 package command
 
 import (
+	"github.com/LaurenceGA/go-crev/internal/di"
 	"github.com/spf13/cobra"
 )
 
@@ -19,5 +20,7 @@ func NewTrustCommand() *cobra.Command {
 
 // args must have length equal to 1. This is ensured by cobra
 func newTrust(cmd *cobra.Command, args []string) error {
-	return nil
+	trustCreator := di.InitialiseTrustCreator(ioFromCommand(cmd))
+
+	return trustCreator.CreateTrust(cmd.Context(), args[0])
 }

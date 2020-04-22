@@ -64,3 +64,9 @@ func InitialiseIDSetterFlow(commandIO *io.IO) *flow.IDSetter {
 		files.NewUserScope,
 	))
 }
+
+func InitialiseTrustCreator(commandIO *io.IO) *flow.TrustCreator {
+	panic(wire.Build(
+		flow.NewTrustCreator,
+	))
+}

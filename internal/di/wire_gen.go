@@ -53,3 +53,8 @@ func InitialiseIDSetterFlow(commandIO *io.IO) *flow.IDSetter {
 	idSetter := flow.NewIDSetter(commandIO, manipulator, client, fetcherFetcher)
 	return idSetter
 }
+
+func InitialiseTrustCreator(commandIO *io.IO) *flow.TrustCreator {
+	trustCreator := flow.NewTrustCreator(commandIO)
+	return trustCreator
+}
