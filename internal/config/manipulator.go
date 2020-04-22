@@ -4,26 +4,23 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/id"
 	"gopkg.in/yaml.v2"
 )
 
-type FileFinder interface {
-	ConfigFile() (string, error)
-}
-
-func NewManipulator(configFileFinder FileFinder) *Manipulator {
+func NewManipulator(appDirs files.AppDirs) *Manipulator {
 	return &Manipulator{
-		configFileFinder: configFileFinder,
+		appDirs: appDirs,
 	}
 }
 
 type Manipulator struct {
-	configFileFinder FileFinder
+	appDirs files.AppDirs
 }
 
 func (m *Manipulator) Load() (*Configuration, error) {
-	configFilepath, err := m.configFileFinder.ConfigFile()
+	configFilepath, err := m.appDirs.ConfigFile()
 	if err != nil {
 		return nil, fmt.Errorf("getting config file path: %w", err)
 	}
@@ -43,7 +40,7 @@ func (m *Manipulator) Load() (*Configuration, error) {
 }
 
 func (m *Manipulator) Save(conf *Configuration) error {
-	configFilepath, err := m.configFileFinder.ConfigFile()
+	configFilepath, err := m.appDirs.ConfigFile()
 	if err != nil {
 		return fmt.Errorf("getting config file path: %w", err)
 	}

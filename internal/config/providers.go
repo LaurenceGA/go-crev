@@ -10,7 +10,7 @@ import (
 var ConfigManipulatorProvider = wire.NewSet(
 	NewManipulator,
 
-	wire.Bind(new(FileFinder), new(*files.Filesystem)),
+	wire.Bind(new(files.AppDirs), new(*files.Filesystem)),
 	files.NewFilesystem,
 	files.NewUserScope,
 )

@@ -37,10 +37,10 @@ func (s *FetcherSuite) TestFailToClone() {
 		Clone(gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil, errors.New("failed to clone"))
 
-	mockFileDirs := mocks.NewMockFileDirs(s.controller)
-	mockFileDirs.EXPECT().Data().Return("data", nil)
+	mockAppDirs := mocks.NewMockAppDirs(s.controller)
+	mockAppDirs.EXPECT().Data().Return("data", nil)
 
-	fetcher := NewFetcher(mockGitCloner, mockFileDirs)
+	fetcher := NewFetcher(mockGitCloner, mockAppDirs)
 
 	_, err := fetcher.Fetch(context.Background(), "")
 
@@ -56,10 +56,10 @@ func (s *FetcherSuite) TestRepoAlreadyExists() {
 		Clone(gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil, git.ErrRepositoryAlreadyExists)
 
-	mockFileDirs := mocks.NewMockFileDirs(s.controller)
-	mockFileDirs.EXPECT().Data().Return("data", nil)
+	mockAppDirs := mocks.NewMockAppDirs(s.controller)
+	mockAppDirs.EXPECT().Data().Return("data", nil)
 
-	fetcher := NewFetcher(mockGitCloner, mockFileDirs)
+	fetcher := NewFetcher(mockGitCloner, mockAppDirs)
 
 	store, err := fetcher.Fetch(context.Background(), "repo")
 	s.Error(err)
@@ -69,10 +69,10 @@ func (s *FetcherSuite) TestRepoAlreadyExists() {
 
 func (s *FetcherSuite) TestFailToFindCloneDir() {
 	mockGitCloner := mocks.NewMockGitCloner(s.controller)
-	mockFileDirs := mocks.NewMockFileDirs(s.controller)
-	mockFileDirs.EXPECT().Data().Return("", errors.New("no filesystem"))
+	mockAppDirs := mocks.NewMockAppDirs(s.controller)
+	mockAppDirs.EXPECT().Data().Return("", errors.New("no filesystem"))
 
-	fetcher := NewFetcher(mockGitCloner, mockFileDirs)
+	fetcher := NewFetcher(mockGitCloner, mockAppDirs)
 
 	_, err := fetcher.Fetch(context.Background(), "")
 
@@ -85,10 +85,10 @@ func (s *FetcherSuite) TestCloneSuccess() {
 		Clone(gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil, nil)
 
-	mockFileDirs := mocks.NewMockFileDirs(s.controller)
-	mockFileDirs.EXPECT().Data().Return("data", nil)
+	mockAppDirs := mocks.NewMockAppDirs(s.controller)
+	mockAppDirs.EXPECT().Data().Return("data", nil)
 
-	fetcher := NewFetcher(mockGitCloner, mockFileDirs)
+	fetcher := NewFetcher(mockGitCloner, mockAppDirs)
 
 	proofStore, err := fetcher.Fetch(context.Background(), "github.com/path")
 

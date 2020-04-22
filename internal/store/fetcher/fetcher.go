@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/store"
 	giturls "github.com/whilp/git-urls"
@@ -16,20 +17,16 @@ type GitCloner interface {
 	Clone(ctx context.Context, url string, location string) (*git.Repository, error)
 }
 
-type FileDirs interface {
-	Data() (string, error)
-}
-
-func NewFetcher(cloner GitCloner, fileDirs FileDirs) *Fetcher {
+func NewFetcher(cloner GitCloner, appDirs files.AppDirs) *Fetcher {
 	return &Fetcher{
 		gitCloner: cloner,
-		fileDirs:  fileDirs,
+		appDirs:   appDirs,
 	}
 }
 
 type Fetcher struct {
 	gitCloner GitCloner
-	fileDirs  FileDirs
+	appDirs   files.AppDirs
 }
 
 const (
@@ -89,7 +86,7 @@ func pathFromRepoURL(repoURL string) (string, error) {
 }
 
 func (f *Fetcher) dataDir() (string, error) {
-	dataDir, err := f.fileDirs.Data()
+	dataDir, err := f.appDirs.Data()
 	if err != nil {
 		return "", err
 	}

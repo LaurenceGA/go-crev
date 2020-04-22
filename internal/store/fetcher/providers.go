@@ -14,7 +14,7 @@ var FetcherProvider = wire.NewSet(
 	wire.Bind(new(GitCloner), new(*git.Client)),
 	git.NewClient,
 
-	wire.Bind(new(FileDirs), new(*files.Filesystem)),
+	wire.Bind(new(files.AppDirs), new(*files.Filesystem)),
 	files.NewFilesystem,
 	files.NewUserScope,
 )

@@ -58,8 +58,7 @@ func InitialiseIDSetterFlow(commandIO *io.IO) *flow.IDSetter {
 		wire.Bind(new(fetcher.GitCloner), new(*git.Client)),
 		git.NewClient,
 
-		wire.Bind(new(fetcher.FileDirs), new(*files.Filesystem)),  // Fetcher
-		wire.Bind(new(config.FileFinder), new(*files.Filesystem)), // Config manipulator
+		wire.Bind(new(files.AppDirs), new(*files.Filesystem)),
 		files.NewFilesystem,
 		files.NewUserScope,
 	))

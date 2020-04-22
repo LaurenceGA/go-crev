@@ -10,6 +10,11 @@ import (
 	gap "github.com/muesli/go-app-paths"
 )
 
+type AppDirs interface {
+	Data() (string, error)
+	ConfigFile() (string, error)
+}
+
 func NewUserScope() *gap.Scope {
 	return gap.NewScope(gap.User, meta.AppName)
 }
