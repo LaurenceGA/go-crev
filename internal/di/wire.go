@@ -4,7 +4,8 @@
 package di
 
 import (
-	"github.com/LaurenceGA/go-crev/internal/command/flow"
+	"github.com/LaurenceGA/go-crev/internal/command/flow/idset"
+	"github.com/LaurenceGA/go-crev/internal/command/flow/trust"
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/files"
@@ -42,17 +43,17 @@ func InitialiseConfigManipulator() *config.Manipulator {
 	))
 }
 
-func InitialiseIDSetterFlow(commandIO *io.IO) *flow.IDSetter {
+func InitialiseIDSetterFlow(commandIO *io.IO) *idset.IDSetter {
 	panic(wire.Build(
-		flow.NewIDSetter,
+		idset.NewIDSetter,
 
-		wire.Bind(new(flow.ConfigManipulator), new(*config.Manipulator)),
+		wire.Bind(new(idset.ConfigManipulator), new(*config.Manipulator)),
 		config.NewManipulator,
 
-		wire.Bind(new(flow.Github), new(*github.Client)),
+		wire.Bind(new(idset.Github), new(*github.Client)),
 		github.NewClient,
 
-		wire.Bind(new(flow.RepoFetcher), new(*fetcher.Fetcher)),
+		wire.Bind(new(idset.RepoFetcher), new(*fetcher.Fetcher)),
 		fetcher.NewFetcher,
 
 		wire.Bind(new(fetcher.GitCloner), new(*git.Client)),
@@ -64,8 +65,8 @@ func InitialiseIDSetterFlow(commandIO *io.IO) *flow.IDSetter {
 	))
 }
 
-func InitialiseTrustCreator(commandIO *io.IO) *flow.TrustCreator {
+func InitialiseTrustCreator(commandIO *io.IO) *trust.TrustCreator {
 	panic(wire.Build(
-		flow.NewTrustCreator,
+		trust.NewTrustCreator,
 	))
 }

@@ -1,5 +1,4 @@
-// package flow detremines more complex user interaction flows
-package flow
+package idset
 
 import (
 	"context"

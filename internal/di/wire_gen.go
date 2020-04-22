@@ -6,7 +6,8 @@
 package di
 
 import (
-	"github.com/LaurenceGA/go-crev/internal/command/flow"
+	"github.com/LaurenceGA/go-crev/internal/command/flow/idset"
+	"github.com/LaurenceGA/go-crev/internal/command/flow/trust"
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/files"
@@ -43,18 +44,18 @@ func InitialiseConfigManipulator() *config.Manipulator {
 	return manipulator
 }
 
-func InitialiseIDSetterFlow(commandIO *io.IO) *flow.IDSetter {
+func InitialiseIDSetterFlow(commandIO *io.IO) *idset.IDSetter {
 	scope := files.NewUserScope()
 	filesystem := files.NewFilesystem(scope)
 	manipulator := config.NewManipulator(filesystem)
 	client := github.NewClient()
 	gitClient := git.NewClient(commandIO)
 	fetcherFetcher := fetcher.NewFetcher(gitClient, filesystem)
-	idSetter := flow.NewIDSetter(commandIO, manipulator, client, fetcherFetcher)
+	idSetter := idset.NewIDSetter(commandIO, manipulator, client, fetcherFetcher)
 	return idSetter
 }
 
-func InitialiseTrustCreator(commandIO *io.IO) *flow.TrustCreator {
-	trustCreator := flow.NewTrustCreator(commandIO)
+func InitialiseTrustCreator(commandIO *io.IO) *trust.TrustCreator {
+	trustCreator := trust.NewTrustCreator(commandIO)
 	return trustCreator
 }
