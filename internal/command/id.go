@@ -28,7 +28,7 @@ func NewCreateNewIDCommand() *cobra.Command {
 	}
 }
 
-// args must be equal to length 1. This is ensured by cobra
+// args must have length equal to 1. This is ensured by cobra
 func createNewID(cmd *cobra.Command, args []string) error {
 	panic("Implement me")
 }
@@ -44,7 +44,7 @@ func NewSetCurrentIDCommand() *cobra.Command {
 	}
 }
 
-// args must be equal to length 1. This is ensured by cobra
+// args must have length equal to 1. This is ensured by cobra
 func setCurrentID(cmd *cobra.Command, args []string) error {
 	setCurrentIDFlow := di.InitialiseIDSetterFlow(ioFromCommand(cmd))
 
