@@ -36,6 +36,7 @@ func TestCannotReadConfig(t *testing.T) {
 
 	for _, testCase := range []struct {
 		name               string
+		usernameInput      string
 		mockConfigResponse mockConfigResponse
 		expectError        bool
 	}{
@@ -75,7 +76,7 @@ func TestCannotReadConfig(t *testing.T) {
 				testCase.mockConfigResponse.getConfigReader(controller),
 			)
 
-			err := trustCreator.CreateTrust(context.Background(), "", trust.CreatorOptions{})
+			err := trustCreator.CreateTrust(context.Background(), testCase.usernameInput, trust.CreatorOptions{})
 
 			if testCase.expectError {
 				assert.Error(t, err)
