@@ -2,6 +2,8 @@ package trust
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/config"
@@ -28,9 +30,13 @@ type CreatorOptions struct {
 }
 
 func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options CreatorOptions) error {
-	_, err := t.configReader.Load()
+	conf, err := t.configReader.Load()
 	if err != nil {
 		return err
+	}
+
+	if err := validateConfig(conf); err != nil {
+		return fmt.Errorf("invalid config: %w", err)
 	}
 
 	// Load local ID
@@ -43,6 +49,18 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 	// Sign
 	// Write file
 	// Commit
+
+	return nil
+}
+
+func validateConfig(c *config.Configuration) error {
+	if c.CurrentStore == "" {
+		return errors.New("user current store is empty")
+	}
+
+	if c.CurrentID == nil {
+		return errors.New("user current ID not set")
+	}
 
 	return nil
 }
