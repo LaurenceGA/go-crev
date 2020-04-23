@@ -56,6 +56,9 @@ func InitialiseIDSetterFlow(commandIO *io.IO) *idset.IDSetter {
 }
 
 func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
-	creator := trust.NewTrustCreator(commandIO)
+	scope := files.NewUserScope()
+	filesystem := files.NewFilesystem(scope)
+	manipulator := config.NewManipulator(filesystem)
+	creator := trust.NewTrustCreator(commandIO, manipulator)
 	return creator
 }

@@ -68,5 +68,12 @@ func InitialiseIDSetterFlow(commandIO *io.IO) *idset.IDSetter {
 func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 	panic(wire.Build(
 		trust.NewTrustCreator,
+
+		wire.Bind(new(trust.ConfigReader), new(*config.Manipulator)),
+		config.NewManipulator,
+
+		wire.Bind(new(files.AppDirs), new(*files.Filesystem)),
+		files.NewFilesystem,
+		files.NewUserScope,
 	))
 }
