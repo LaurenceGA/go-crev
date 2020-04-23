@@ -6,7 +6,7 @@ import (
 
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/id"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 func NewManipulator(appDirs files.AppDirs) *Manipulator {
