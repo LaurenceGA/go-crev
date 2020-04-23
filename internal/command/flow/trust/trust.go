@@ -30,17 +30,11 @@ type CreatorOptions struct {
 }
 
 func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options CreatorOptions) error {
-	conf, err := t.configReader.Load()
+	_, err := t.loadConfig()
 	if err != nil {
 		return err
 	}
 
-	if err := validateConfig(conf); err != nil {
-		return fmt.Errorf("invalid config: %w", err)
-	}
-
-	// Load local ID
-	// Load local store location
 	// Load local SSH key (verify?)
 	// Get user ID
 	// Look for standard crev-proofs repo
@@ -53,7 +47,21 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 	return nil
 }
 
+func (t *Creator) loadConfig() (*config.Configuration, error) {
+	conf, err := t.configReader.Load()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := validateConfig(conf); err != nil {
+		return nil, fmt.Errorf("invalid config: %w", err)
+	}
+
+	return conf, nil
+}
+
 func validateConfig(c *config.Configuration) error {
+	// Should check if location exists in filesystem?
 	if c.CurrentStore == "" {
 		return errors.New("user current store is empty")
 	}
