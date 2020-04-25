@@ -6,9 +6,10 @@ import (
 	"testing"
 
 	"github.com/LaurenceGA/go-crev/internal/command/flow/trust"
+	"github.com/LaurenceGA/go-crev/internal/command/flow/trust/mock"
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/config"
-	"github.com/LaurenceGA/go-crev/internal/mocks"
+	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,15 +19,42 @@ type mockConfigResponse struct {
 	err    error
 }
 
-func (m *mockConfigResponse) applyToMock(mock *mocks.MockConfigReader) {
-	mock.EXPECT().Load().Return(m.config, m.err)
+func (m *mockConfigResponse) getMock(controller *gomock.Controller) *mock.MockConfigReader {
+	mck := mock.NewMockConfigReader(controller)
+	mck.EXPECT().Load().Return(m.config, m.err)
+
+	return mck
 }
 
-func (m *mockConfigResponse) getConfigReader(controller *gomock.Controller) *mocks.MockConfigReader {
-	mock := mocks.NewMockConfigReader(controller)
-	m.applyToMock(mock)
+type mockGithubResponse struct {
+	mockGetUser *struct {
+		expectedUsername string
+		usr              *github.User
+		err              error
+	}
+	mockGetRepo *struct {
+		expectedOwner, expectedRepo string
+		repo                        *github.Repository
+		err                         error
+	}
+}
 
-	return mock
+func (m *mockGithubResponse) getMock(controller *gomock.Controller) *mock.MockGithub {
+	mck := mock.NewMockGithub(controller)
+
+	if m.mockGetUser != nil {
+		mck.EXPECT().
+			GetUser(gomock.Any(), m.mockGetUser.expectedUsername).
+			Return(m.mockGetUser.usr, m.mockGetUser.err)
+	}
+
+	if m.mockGetRepo != nil {
+		mck.EXPECT().
+			GetRepository(gomock.Any(), m.mockGetRepo.expectedOwner, m.mockGetRepo.expectedRepo).
+			Return(m.mockGetRepo.repo, m.mockGetRepo.err)
+	}
+
+	return mck
 }
 
 func TestCannotReadConfig(t *testing.T) {
@@ -38,6 +66,7 @@ func TestCannotReadConfig(t *testing.T) {
 		name               string
 		usernameInput      string
 		mockConfigResponse mockConfigResponse
+		mockGithubResponse mockGithubResponse
 		expectError        bool
 	}{
 		{
@@ -73,7 +102,8 @@ func TestCannotReadConfig(t *testing.T) {
 
 			trustCreator := trust.NewTrustCreator(
 				&io.IO{},
-				testCase.mockConfigResponse.getConfigReader(controller),
+				testCase.mockConfigResponse.getMock(controller),
+				testCase.mockGithubResponse.getMock(controller),
 			)
 
 			err := trustCreator.CreateTrust(context.Background(), testCase.usernameInput, trust.CreatorOptions{})

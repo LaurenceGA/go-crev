@@ -59,6 +59,7 @@ func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 	scope := files.NewUserScope()
 	filesystem := files.NewFilesystem(scope)
 	manipulator := config.NewManipulator(filesystem)
-	creator := trust.NewTrustCreator(commandIO, manipulator)
+	client := github.NewClient()
+	creator := trust.NewTrustCreator(commandIO, manipulator, client)
 	return creator
 }

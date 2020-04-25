@@ -51,7 +51,7 @@ linters:
 
 issues:
   exclude-rules:
-    - path: .*/mocks/generate\.go
+    - path: .*/mock(s)?/generate\.go
       linters:
         - lll
     - path: .*_test.go

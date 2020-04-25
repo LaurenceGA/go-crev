@@ -7,22 +7,32 @@ import (
 
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/config"
+	"github.com/LaurenceGA/go-crev/internal/github"
 )
 
 type ConfigReader interface {
 	Load() (*config.Configuration, error)
 }
 
-func NewTrustCreator(commandIO *io.IO, configReader ConfigReader) *Creator {
+type Github interface {
+	GetUser(context.Context, string) (*github.User, error)
+	GetRepository(context.Context, string, string) (*github.Repository, error)
+}
+
+func NewTrustCreator(commandIO *io.IO,
+	configReader ConfigReader,
+	githubClient Github) *Creator {
 	return &Creator{
 		commandIO:    commandIO,
 		configReader: configReader,
+		githubClient: githubClient,
 	}
 }
 
 type Creator struct {
 	commandIO    *io.IO
 	configReader ConfigReader
+	githubClient Github
 }
 
 type CreatorOptions struct {
@@ -36,7 +46,10 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 	}
 
 	// Load local SSH key (verify?)
+
 	// Get user ID
+	// username := strings.TrimPrefix(usernameRaw, "@")
+
 	// Look for standard crev-proofs repo
 	// Present UI for rating
 	// Present UI for comment

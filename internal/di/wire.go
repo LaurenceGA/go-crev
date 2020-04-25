@@ -75,5 +75,8 @@ func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 		wire.Bind(new(files.AppDirs), new(*files.Filesystem)),
 		files.NewFilesystem,
 		files.NewUserScope,
+
+		wire.Bind(new(trust.Github), new(*github.Client)),
+		github.NewClient,
 	))
 }
