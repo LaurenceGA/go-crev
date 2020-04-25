@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/config"
@@ -48,7 +49,12 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 	// Load local SSH key (verify?)
 
 	// Get user ID
-	// username := strings.TrimPrefix(usernameRaw, "@")
+	username := strings.TrimPrefix(usernameRaw, "@")
+
+	_, err = t.githubClient.GetUser(ctx, username)
+	if err != nil {
+		return err
+	}
 
 	// Look for standard crev-proofs repo
 	// Present UI for rating
