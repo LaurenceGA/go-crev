@@ -11,6 +11,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/id"
+	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
@@ -33,13 +34,15 @@ type mockGetUser struct {
 	err              error
 }
 
+type mockGetRepo struct {
+	expectedOwner, expectedRepo string
+	repo                        *github.Repository
+	err                         error
+}
+
 type mockGithubResponse struct {
 	mockGetUser *mockGetUser
-	mockGetRepo *struct {
-		expectedOwner, expectedRepo string
-		repo                        *github.Repository
-		err                         error
-	}
+	mockGetRepo *mockGetRepo
 }
 
 func (m *mockGithubResponse) getMock(controller *gomock.Controller) *mock.MockGithub {
@@ -62,7 +65,25 @@ func (m *mockGithubResponse) getMock(controller *gomock.Controller) *mock.MockGi
 
 func TestCannotReadConfig(t *testing.T) {
 	const (
-		testStore = "/my/store"
+		testStore    = "/my/store"
+		testUsername = "user"
+		testID       = 123
+	)
+
+	var (
+		testMockConfig = mockConfigResponse{
+			config: &config.Configuration{
+				CurrentStore: testStore,
+				CurrentID:    &id.ID{},
+			},
+		}
+		testMockGetUser = &mockGetUser{
+			expectedUsername: testUsername,
+			usr: &github.User{
+				ID:    testID,
+				Login: testUsername,
+			},
+		}
 	)
 
 	for _, testCase := range []struct {
@@ -100,14 +121,9 @@ func TestCannotReadConfig(t *testing.T) {
 			expectError: true,
 		},
 		{
-			name:          "Error getting user",
-			usernameInput: "user",
-			mockConfigResponse: mockConfigResponse{
-				config: &config.Configuration{
-					CurrentStore: testStore,
-					CurrentID:    &id.ID{},
-				},
-			},
+			name:               "Error getting user",
+			usernameInput:      "user",
+			mockConfigResponse: testMockConfig,
 			mockGithubResponse: mockGithubResponse{
 				mockGetUser: &mockGetUser{
 					expectedUsername: "user",
@@ -115,6 +131,20 @@ func TestCannotReadConfig(t *testing.T) {
 				},
 			},
 			expectError: true,
+		},
+		{
+			name:               "Fail trying to get repo",
+			usernameInput:      testUsername,
+			mockConfigResponse: testMockConfig,
+			mockGithubResponse: mockGithubResponse{
+				mockGetUser: testMockGetUser,
+				mockGetRepo: &mockGetRepo{
+					expectedOwner: testUsername,
+					expectedRepo:  store.StandardCrevProofRepoName,
+					err:           errors.New("can't talk to Github"),
+				},
+			},
+			expectError: false, // Error is non-fatal
 		},
 	} {
 		testCase := testCase

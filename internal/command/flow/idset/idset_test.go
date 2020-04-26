@@ -289,7 +289,7 @@ func setFetchStoreMocks(mockStoreFetcher *mocks.MockRepoFetcher, mockData *fetch
 func expectedDefaultRepo(owner string) getRepoInput {
 	return getRepoInput{
 		owner: owner,
-		repo:  standardCrevProofRepoName,
+		repo:  store.StandardCrevProofRepoName,
 	}
 }
 

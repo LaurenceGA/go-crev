@@ -9,6 +9,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/github"
+	"github.com/LaurenceGA/go-crev/internal/store"
 )
 
 type ConfigReader interface {
@@ -51,10 +52,16 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 	// Get user ID
 	username := strings.TrimPrefix(usernameRaw, "@")
 
-	_, err = t.githubClient.GetUser(ctx, username)
+	usr, err := t.githubClient.GetUser(ctx, username)
 	if err != nil {
 		return err
 	}
+
+	// Test usr.ID == config.ID.ID
+
+	idURL := t.getUserIDURL(ctx, usr.Login)
+
+	fmt.Println(idURL)
 
 	// Look for standard crev-proofs repo
 	// Present UI for rating
@@ -77,6 +84,25 @@ func (t *Creator) loadConfig() (*config.Configuration, error) {
 	}
 
 	return conf, nil
+}
+
+func (t *Creator) getUserIDURL(ctx context.Context, username string) string {
+	repo, err := t.githubClient.GetRepository(ctx, username, store.StandardCrevProofRepoName)
+	if err != nil {
+		if errors.Is(err, github.NotFoundError) {
+			fmt.Fprintf(t.commandIO.Out(),
+				"Couldn't find proof repo in Github for %s/%s\n",
+				username,
+				store.StandardCrevProofRepoName)
+		} else {
+			// Non-fatal. Just print and move on...
+			fmt.Fprintf(t.commandIO.Err(), "Failed trying to find repository with error: %v\n", err)
+		}
+
+		return "" // No known crev proof URL for ID
+	}
+
+	return repo.HTMLurl
 }
 
 func validateConfig(c *config.Configuration) error {
