@@ -7,6 +7,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/command/flow/idset"
 	"github.com/LaurenceGA/go-crev/internal/command/flow/trust"
 	"github.com/LaurenceGA/go-crev/internal/command/io"
+	"github.com/LaurenceGA/go-crev/internal/command/io/prompt"
 	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
@@ -78,5 +79,8 @@ func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 
 		wire.Bind(new(trust.Github), new(*github.Client)),
 		github.NewClient,
+
+		wire.Bind(new(trust.Prompter), new(*prompt.Prompter)),
+		prompt.NewPrompter,
 	))
 }

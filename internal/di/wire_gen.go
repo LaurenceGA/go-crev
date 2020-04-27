@@ -9,6 +9,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/command/flow/idset"
 	"github.com/LaurenceGA/go-crev/internal/command/flow/trust"
 	"github.com/LaurenceGA/go-crev/internal/command/io"
+	"github.com/LaurenceGA/go-crev/internal/command/io/prompt"
 	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
@@ -60,6 +61,7 @@ func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 	filesystem := files.NewFilesystem(scope)
 	manipulator := config.NewManipulator(filesystem)
 	client := github.NewClient()
-	creator := trust.NewTrustCreator(commandIO, manipulator, client)
+	prompter := prompt.NewPrompter(commandIO)
+	creator := trust.NewTrustCreator(commandIO, manipulator, client, prompter)
 	return creator
 }

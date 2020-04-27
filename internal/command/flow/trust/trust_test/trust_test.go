@@ -28,6 +28,22 @@ func (m *mockConfigResponse) getMock(controller *gomock.Controller) *mock.MockCo
 	return mck
 }
 
+type mockPromptResponse struct {
+	promptExpected bool
+	selection      string
+	err            error
+}
+
+func (m *mockPromptResponse) getMock(controller *gomock.Controller) *mock.MockPrompter {
+	mck := mock.NewMockPrompter(controller)
+
+	if m.promptExpected {
+		mck.EXPECT().Select(gomock.Any(), gomock.Any()).Return(m.selection, m.err)
+	}
+
+	return mck
+}
+
 type mockGetUser struct {
 	expectedUsername string
 	usr              *github.User
@@ -91,6 +107,7 @@ func TestCannotReadConfig(t *testing.T) {
 		usernameInput      string
 		mockConfigResponse mockConfigResponse
 		mockGithubResponse mockGithubResponse
+		mockPromptResponse mockPromptResponse
 		expectError        bool
 	}{
 		{
@@ -144,7 +161,8 @@ func TestCannotReadConfig(t *testing.T) {
 					err:           errors.New("can't talk to Github"),
 				},
 			},
-			expectError: false, // Error is non-fatal
+			mockPromptResponse: mockPromptResponse{promptExpected: true},
+			expectError:        false, // Error is non-fatal
 		},
 	} {
 		testCase := testCase
@@ -155,6 +173,7 @@ func TestCannotReadConfig(t *testing.T) {
 				&io.IO{},
 				testCase.mockConfigResponse.getMock(controller),
 				testCase.mockGithubResponse.getMock(controller),
+				testCase.mockPromptResponse.getMock(controller),
 			)
 
 			err := trustCreator.CreateTrust(context.Background(), testCase.usernameInput, trust.CreatorOptions{})

@@ -21,13 +21,19 @@ type Github interface {
 	GetRepository(context.Context, string, string) (*github.Repository, error)
 }
 
+type Prompter interface {
+	Select(string, []string) (string, error)
+}
+
 func NewTrustCreator(commandIO *io.IO,
 	configReader ConfigReader,
-	githubClient Github) *Creator {
+	githubClient Github,
+	prompter Prompter) *Creator {
 	return &Creator{
 		commandIO:    commandIO,
 		configReader: configReader,
 		githubClient: githubClient,
+		prompter:     prompter,
 	}
 }
 
@@ -35,6 +41,7 @@ type Creator struct {
 	commandIO    *io.IO
 	configReader ConfigReader
 	githubClient Github
+	prompter     Prompter
 }
 
 type CreatorOptions struct {
@@ -60,10 +67,15 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 	// Test usr.ID == config.ID.ID
 
 	idURL := t.getUserIDURL(ctx, usr.Login)
-
 	fmt.Println(idURL)
 
-	// Look for standard crev-proofs repo
+	trustLevel, err := t.prompter.Select("Trust level", []string{"Distrust", "None", "Low", "Medium", "High"})
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(trustLevel)
+
 	// Present UI for rating
 	// Present UI for comment
 	// Sign
