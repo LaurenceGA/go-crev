@@ -1,6 +1,7 @@
 package trust
 
 import (
+	"strings"
 	"time"
 
 	"github.com/LaurenceGA/go-crev/internal/id"
@@ -13,11 +14,11 @@ const TrustVersion = -1
 type Level string
 
 const (
-	Distrust Level = "Distrust"
-	None     Level = "None"
-	Low      Level = "Low"
-	Medium   Level = "Medium"
-	High     Level = "High"
+	Distrust Level = "distrust"
+	None     Level = "none"
+	Low      Level = "low"
+	Medium   Level = "medium"
+	High     Level = "high"
 )
 
 func levelLookupMap() map[string]Level {
@@ -36,7 +37,7 @@ func Levels() []Level {
 }
 
 func ToLevel(s string) (Level, bool) {
-	l, ok := levelLookupMap()[s]
+	l, ok := levelLookupMap()[strings.ToLower(s)]
 
 	return l, ok
 }
