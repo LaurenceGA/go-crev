@@ -81,9 +81,9 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 		return err
 	}
 
-	trust := trust.New(*config.CurrentID, trustLevel, trustComment)
+	trustObj := trust.New(*config.CurrentID, trustLevel, trustComment)
 
-	fmt.Println(trust)
+	fmt.Println(trustObj)
 
 	// Sign
 	// Write file
