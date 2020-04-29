@@ -135,23 +135,20 @@ func TestCannotReadConfig(t *testing.T) {
 		}
 	)
 
-	for _, testCase := range []struct {
-		name               string
+	for name, testCase := range map[string]struct {
 		usernameInput      string
 		mockConfigResponse mockConfigResponse
 		mockGithubResponse mockGithubResponse
 		mockPromptResponse mockPromptResponse
 		expectError        bool
 	}{
-		{
-			name: "Cannot read config",
+		"Cannot read config": {
 			mockConfigResponse: mockConfigResponse{
 				err: errors.New("can't read config"),
 			},
 			expectError: true,
 		},
-		{
-			name: "No store set",
+		"No store set": {
 			mockConfigResponse: mockConfigResponse{
 				config: &config.Configuration{
 					CurrentStore: "",
@@ -160,8 +157,7 @@ func TestCannotReadConfig(t *testing.T) {
 			},
 			expectError: true,
 		},
-		{
-			name: "No ID set",
+		"No ID set": {
 			mockConfigResponse: mockConfigResponse{
 				config: &config.Configuration{
 					CurrentStore: testStore,
@@ -170,8 +166,7 @@ func TestCannotReadConfig(t *testing.T) {
 			},
 			expectError: true,
 		},
-		{
-			name:               "Error getting user",
+		"Error getting user": {
 			usernameInput:      "user",
 			mockConfigResponse: testMockConfig,
 			mockGithubResponse: mockGithubResponse{
@@ -182,8 +177,7 @@ func TestCannotReadConfig(t *testing.T) {
 			},
 			expectError: true,
 		},
-		{
-			name:               "Fail trying to get repo",
+		"Fail trying to get repo": {
 			usernameInput:      testUsername,
 			mockConfigResponse: testMockConfig,
 			mockGithubResponse: mockGithubResponse{
@@ -197,8 +191,7 @@ func TestCannotReadConfig(t *testing.T) {
 			mockPromptResponse: testPrompt,
 			expectError:        false, // Error is non-fatal
 		},
-		{
-			name:               "Invalid level selection",
+		"Invalid level selection": {
 			usernameInput:      testUsername,
 			mockConfigResponse: testMockConfig,
 			mockGithubResponse: testMockGithub,
@@ -209,8 +202,7 @@ func TestCannotReadConfig(t *testing.T) {
 			},
 			expectError: true,
 		},
-		{
-			name:               "Failed trust level prompt",
+		"Failed trust level prompt": {
 			usernameInput:      testUsername,
 			mockConfigResponse: testMockConfig,
 			mockGithubResponse: testMockGithub,
@@ -223,7 +215,10 @@ func TestCannotReadConfig(t *testing.T) {
 		},
 	} {
 		testCase := testCase
-		t.Run(testCase.name, func(t *testing.T) {
+
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
 			controller := gomock.NewController(t)
 
 			trustCreator := trust.NewTrustCreator(
