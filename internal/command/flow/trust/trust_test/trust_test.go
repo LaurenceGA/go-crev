@@ -98,9 +98,10 @@ func (m *mockGithubResponse) getMock(controller *gomock.Controller) *mock.MockGi
 
 func TestCannotReadConfig(t *testing.T) {
 	const (
-		testStore    = "/my/store"
-		testUsername = "user"
-		testID       = 123
+		testStore          = "/my/store"
+		testUsername       = "user"
+		testID             = 123
+		testLevelSelection = "None"
 	)
 
 	var (
@@ -116,6 +117,21 @@ func TestCannotReadConfig(t *testing.T) {
 				ID:    testID,
 				Login: testUsername,
 			},
+		}
+		testMockGetRepo = &mockGetRepo{
+			expectedOwner: testUsername,
+			expectedRepo:  store.StandardCrevProofRepoName,
+			repo:          &github.Repository{},
+		}
+		testMockGithub = mockGithubResponse{
+			mockGetUser: testMockGetUser,
+			mockGetRepo: testMockGetRepo,
+		}
+		testPrompt = mockPromptResponse{
+			&trustPrompt{
+				selection: "None",
+			},
+			&commentPrompt{},
 		}
 	)
 
@@ -178,11 +194,32 @@ func TestCannotReadConfig(t *testing.T) {
 					err:           errors.New("can't talk to Github"),
 				},
 			},
+			mockPromptResponse: testPrompt,
+			expectError:        false, // Error is non-fatal
+		},
+		{
+			name:               "Invalid level selection",
+			usernameInput:      testUsername,
+			mockConfigResponse: testMockConfig,
+			mockGithubResponse: testMockGithub,
 			mockPromptResponse: mockPromptResponse{
-				trustPrompt:   &trustPrompt{},
-				commentPrompt: &commentPrompt{},
+				trustPrompt: &trustPrompt{
+					selection: "Not a level",
+				},
 			},
-			expectError: false, // Error is non-fatal
+			expectError: true,
+		},
+		{
+			name:               "Failed trust level prompt",
+			usernameInput:      testUsername,
+			mockConfigResponse: testMockConfig,
+			mockGithubResponse: testMockGithub,
+			mockPromptResponse: mockPromptResponse{
+				trustPrompt: &trustPrompt{
+					err: errors.New("nope"),
+				},
+			},
+			expectError: true,
 		},
 	} {
 		testCase := testCase

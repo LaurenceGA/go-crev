@@ -10,6 +10,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/store"
+	"github.com/LaurenceGA/go-crev/proof/trust"
 )
 
 type ConfigReader interface {
@@ -50,7 +51,7 @@ type CreatorOptions struct {
 }
 
 func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options CreatorOptions) error {
-	_, err := t.loadConfig()
+	config, err := t.loadConfig()
 	if err != nil {
 		return err
 	}
@@ -70,7 +71,7 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 	idURL := t.getUserIDURL(ctx, usr.Login)
 	fmt.Println(idURL)
 
-	trustLevel, err := t.prompter.Select("Trust level", []string{"Distrust", "None", "Low", "Medium", "High"})
+	trustLevel, err := t.getTrustLevel()
 	if err != nil {
 		return err
 	}
@@ -80,7 +81,9 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 		return err
 	}
 
-	fmt.Println(trustLevel, trustComment)
+	trust := trust.New(*config.CurrentID, trustLevel, trustComment)
+
+	fmt.Println(trust)
 
 	// Sign
 	// Write file
@@ -132,4 +135,29 @@ func validateConfig(c *config.Configuration) error {
 	}
 
 	return nil
+}
+
+func (t *Creator) getTrustLevel() (trust.Level, error) {
+	levelResponse, err := t.prompter.Select("Trust level", trustPrompts())
+	if err != nil {
+		return "", err
+	}
+
+	level, ok := trust.ToLevel(levelResponse)
+	if !ok {
+		return "", errors.New("invalid level: " + levelResponse)
+	}
+
+	return level, nil
+}
+
+func trustPrompts() []string {
+	levels := trust.Levels()
+	promptLevels := make([]string, 0, len(levels))
+
+	for _, l := range levels {
+		promptLevels = append(promptLevels, strings.Title(string(l)))
+	}
+
+	return promptLevels
 }
