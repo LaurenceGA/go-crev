@@ -28,17 +28,34 @@ func (m *mockConfigResponse) getMock(controller *gomock.Controller) *mock.MockCo
 	return mck
 }
 
+type trustPrompt struct {
+	selection string
+	err       error
+}
+
+type commentPrompt struct {
+	comment string
+	err     error
+}
+
 type mockPromptResponse struct {
-	promptExpected bool
-	selection      string
-	err            error
+	trustPrompt   *trustPrompt
+	commentPrompt *commentPrompt
 }
 
 func (m *mockPromptResponse) getMock(controller *gomock.Controller) *mock.MockPrompter {
 	mck := mock.NewMockPrompter(controller)
 
-	if m.promptExpected {
-		mck.EXPECT().Select(gomock.Any(), gomock.Any()).Return(m.selection, m.err)
+	if m.trustPrompt != nil {
+		mck.EXPECT().
+			Select(gomock.Any(), gomock.Any()).
+			Return(m.trustPrompt.selection, m.trustPrompt.err)
+	}
+
+	if m.commentPrompt != nil {
+		mck.EXPECT().
+			Prompt(gomock.Any()).
+			Return(m.commentPrompt.comment, m.commentPrompt.err)
 	}
 
 	return mck
@@ -161,8 +178,11 @@ func TestCannotReadConfig(t *testing.T) {
 					err:           errors.New("can't talk to Github"),
 				},
 			},
-			mockPromptResponse: mockPromptResponse{promptExpected: true},
-			expectError:        false, // Error is non-fatal
+			mockPromptResponse: mockPromptResponse{
+				trustPrompt:   &trustPrompt{},
+				commentPrompt: &commentPrompt{},
+			},
+			expectError: false, // Error is non-fatal
 		},
 	} {
 		testCase := testCase

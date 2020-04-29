@@ -126,6 +126,21 @@ func (m *MockPrompter) EXPECT() *MockPrompterMockRecorder {
 	return m.recorder
 }
 
+// Prompt mocks base method
+func (m *MockPrompter) Prompt(arg0 string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Prompt", arg0)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Prompt indicates an expected call of Prompt
+func (mr *MockPrompterMockRecorder) Prompt(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Prompt", reflect.TypeOf((*MockPrompter)(nil).Prompt), arg0)
+}
+
 // Select mocks base method
 func (m *MockPrompter) Select(arg0 string, arg1 []string) (string, error) {
 	m.ctrl.T.Helper()

@@ -34,6 +34,16 @@ func (p *Prompter) Select(label string, options []string) (string, error) {
 	return result, nil
 }
 
+func (p *Prompter) Prompt(label string) (string, error) {
+	prompt := promptui.Prompt{
+		Label:  label,
+		Stdin:  ioutil.NopCloser(p.commandIO.In()),
+		Stdout: noopCloser(p.commandIO.Out()),
+	}
+
+	return prompt.Run()
+}
+
 func noopCloser(w stdio.Writer) stdio.WriteCloser {
 	return &noopWriteCloser{w}
 }

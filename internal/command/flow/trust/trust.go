@@ -23,6 +23,7 @@ type Github interface {
 
 type Prompter interface {
 	Select(string, []string) (string, error)
+	Prompt(string) (string, error)
 }
 
 func NewTrustCreator(commandIO *io.IO,
@@ -74,10 +75,13 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 		return err
 	}
 
-	fmt.Println(trustLevel)
+	trustComment, err := t.prompter.Prompt("Comment")
+	if err != nil {
+		return err
+	}
 
-	// Present UI for rating
-	// Present UI for comment
+	fmt.Println(trustLevel, trustComment)
+
 	// Sign
 	// Write file
 	// Commit
