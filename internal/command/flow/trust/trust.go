@@ -58,15 +58,12 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 
 	// Load local SSH key (verify?)
 
-	// Get user ID
 	username := strings.TrimPrefix(usernameRaw, "@")
 
 	usr, err := t.githubClient.GetUser(ctx, username)
 	if err != nil {
 		return err
 	}
-
-	// Test usr.ID == config.ID.ID
 
 	idURL := t.getUserIDURL(ctx, usr.Login)
 	fmt.Println(idURL)
