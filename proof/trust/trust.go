@@ -73,9 +73,9 @@ type Data struct {
 }
 
 func (t *Trust) Sign(signer ssh.Signer) error {
-	data, err := yaml.Marshal(t.Data)
+	data, err := t.MarshalData()
 	if err != nil {
-		return fmt.Errorf("marshaling data: %w", err)
+		return err
 	}
 
 	signature, err := signer.Sign(rand.Reader, data)
@@ -86,6 +86,19 @@ func (t *Trust) Sign(signer ssh.Signer) error {
 	t.Signature = base64.StdEncoding.EncodeToString(signature.Blob)
 
 	return nil
+}
+
+func (t *Trust) MarshalData() ([]byte, error) {
+	data, err := yaml.Marshal(t.Data)
+	if err != nil {
+		return nil, fmt.Errorf("marshaling data: %w", err)
+	}
+
+	return data, nil
+}
+
+func (t *Trust) Signature() string {
+	return t.Signature
 }
 
 func (t *Trust) String() string {

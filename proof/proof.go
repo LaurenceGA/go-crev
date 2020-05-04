@@ -13,6 +13,11 @@ const (
 	Review Kind = "package review"
 )
 
+type Proof interface {
+	MarshalData() ([]byte, error)
+	Signature() string
+}
+
 type CommonData struct {
 	Kind    Kind      `yaml:"kind"`
 	Version int       `yaml:"version"`
