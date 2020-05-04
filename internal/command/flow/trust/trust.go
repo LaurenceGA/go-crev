@@ -32,17 +32,23 @@ type KeyLoader interface {
 	LoadKey(string) (ssh.Signer, error)
 }
 
+type StoreWriter interface {
+	SaveTrust(*trust.Trust) error
+}
+
 func NewTrustCreator(commandIO *io.IO,
 	configReader ConfigReader,
 	githubClient Github,
 	prompter Prompter,
-	keyLoader KeyLoader) *Creator {
+	keyLoader KeyLoader,
+	storeWriter StoreWriter) *Creator {
 	return &Creator{
 		commandIO:    commandIO,
 		configReader: configReader,
 		githubClient: githubClient,
 		prompter:     prompter,
 		keyLoader:    keyLoader,
+		storeWriter:  storeWriter,
 	}
 }
 
@@ -52,6 +58,7 @@ type Creator struct {
 	githubClient Github
 	prompter     Prompter
 	keyLoader    KeyLoader
+	storeWriter  StoreWriter
 }
 
 type CreatorOptions struct {
@@ -94,6 +101,8 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 	if err := trustObj.Sign(sshKeySigner); err != nil {
 		return err
 	}
+
+	// userStore := store.ProofStore{Dir: config.CurrentStore}
 
 	fmt.Println(trustObj)
 

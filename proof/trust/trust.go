@@ -97,7 +97,7 @@ func (t *Trust) MarshalData() ([]byte, error) {
 	return data, nil
 }
 
-func (t *Trust) Signature() string {
+func (t *Trust) MarshalSignature() string {
 	return t.Signature
 }
 

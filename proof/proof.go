@@ -15,7 +15,7 @@ const (
 
 type Proof interface {
 	MarshalData() ([]byte, error)
-	Signature() string
+	MarshalSignature() string
 }
 
 type CommonData struct {

@@ -62,9 +62,10 @@ func (i *IDSetter) SetFromUsername(ctx context.Context, usernameRaw string) erro
 	idStoreURL := i.loadExistingStandardRepo(ctx, usr.Login)
 
 	return i.configManipulator.SetCurrentID(&id.ID{
-		ID:   strconv.Itoa(int(usr.ID)),
-		Type: id.Github,
-		URL:  idStoreURL,
+		ID:    strconv.Itoa(int(usr.ID)),
+		Type:  id.Github,
+		URL:   idStoreURL,
+		Alias: usr.Login,
 	})
 }
 

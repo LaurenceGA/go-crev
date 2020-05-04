@@ -13,6 +13,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/store/fetcher"
+	"github.com/LaurenceGA/go-crev/internal/store/writer"
 	"github.com/LaurenceGA/go-crev/internal/verifier"
 	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
 	"github.com/LaurenceGA/go-crev/mod"
@@ -86,5 +87,8 @@ func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 
 		wire.Bind(new(trust.KeyLoader), new(*ssh.Loader)),
 		ssh.NewLoader,
+
+		wire.Bind(new(trust.StoreWriter), new(*writer.Writer)),
+		writer.New,
 	))
 }

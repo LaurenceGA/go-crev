@@ -127,6 +127,14 @@ func mockSigner(controller *gomock.Controller, signature string) *mock.MockSigne
 	return s
 }
 
+type mockStoreWriter struct{}
+
+func (m *mockStoreWriter) getMock(controller *gomock.Controller) *mock.MockStoreWriter {
+	mck := mock.NewMockStoreWriter(controller)
+
+	return mck
+}
+
 func TestCannotReadConfig(t *testing.T) {
 	const (
 		testStore          = "/my/store"
@@ -175,6 +183,7 @@ func TestCannotReadConfig(t *testing.T) {
 		mockGithubResponse mockGithubResponse
 		mockPromptResponse mockPromptResponse
 		mockKeyLoader      mockKeyLoader
+		mockStoreWriter    mockStoreWriter
 		expectError        bool
 	}{
 		"Cannot read config": {
@@ -275,6 +284,7 @@ func TestCannotReadConfig(t *testing.T) {
 				testCase.mockGithubResponse.getMock(controller),
 				testCase.mockPromptResponse.getMock(controller),
 				testCase.mockKeyLoader.getMock(controller),
+				testCase.mockStoreWriter.getMock(controller),
 			)
 
 			err := trustCreator.CreateTrust(context.Background(), testCase.usernameInput, trust.CreatorOptions{})

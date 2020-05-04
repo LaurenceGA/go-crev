@@ -15,6 +15,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/store/fetcher"
+	"github.com/LaurenceGA/go-crev/internal/store/writer"
 	"github.com/LaurenceGA/go-crev/internal/verifier"
 	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
 	"github.com/LaurenceGA/go-crev/mod"
@@ -64,6 +65,7 @@ func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 	client := github.NewClient()
 	prompter := prompt.NewPrompter(commandIO)
 	loader := ssh.NewLoader()
-	creator := trust.NewTrustCreator(commandIO, manipulator, client, prompter, loader)
+	writerWriter := writer.New()
+	creator := trust.NewTrustCreator(commandIO, manipulator, client, prompter, loader, writerWriter)
 	return creator
 }
