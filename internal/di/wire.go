@@ -16,6 +16,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/verifier"
 	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
 	"github.com/LaurenceGA/go-crev/mod"
+	"github.com/LaurenceGA/go-crev/ssh"
 	"github.com/google/wire"
 )
 
@@ -82,5 +83,8 @@ func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 
 		wire.Bind(new(trust.Prompter), new(*prompt.Prompter)),
 		prompt.NewPrompter,
+
+		wire.Bind(new(trust.KeyLoader), new(*ssh.Loader)),
+		ssh.NewLoader,
 	))
 }

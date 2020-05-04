@@ -1,11 +1,15 @@
 package trust
 
 import (
+	"crypto/rand"
+	"encoding/base64"
+	"fmt"
 	"strings"
 	"time"
 
 	"github.com/LaurenceGA/go-crev/internal/id"
 	"github.com/LaurenceGA/go-crev/proof"
+	"golang.org/x/crypto/ssh"
 	"gopkg.in/yaml.v3"
 )
 
@@ -44,34 +48,51 @@ func ToLevel(s string) (Level, bool) {
 
 func New(from id.ID, level Level, comment string) *Trust {
 	return &Trust{
-		proof.CommonData{
-			Kind:    proof.Trust,
-			Version: TrustVersion,
-			Date:    time.Now(),
-			From:    from,
-		},
-		Data{
+		Data: Data{
 			Level:   level,
 			Comment: comment,
+			CommonData: proof.CommonData{
+				Kind:    proof.Trust,
+				Version: TrustVersion,
+				Date:    time.Now(),
+				From:    from,
+			},
 		},
 	}
 }
 
 type Trust struct {
-	proof.CommonData `yaml:",inline"`
-	Data             `yaml:",inline"`
+	Data      Data
+	Signature string
 }
 
 type Data struct {
-	Level   Level
-	Comment string
+	Level            Level
+	Comment          string
+	proof.CommonData `yaml:",inline"`
+}
+
+func (t *Trust) Sign(signer ssh.Signer) error {
+	data, err := yaml.Marshal(t.Data)
+	if err != nil {
+		return fmt.Errorf("marshaling data: %w", err)
+	}
+
+	signature, err := signer.Sign(rand.Reader, data)
+	if err != nil {
+		return fmt.Errorf("signing message: %w", err)
+	}
+
+	t.Signature = base64.StdEncoding.EncodeToString(signature.Blob)
+
+	return nil
 }
 
 func (t *Trust) String() string {
-	data, err := yaml.Marshal(t)
+	data, err := yaml.Marshal(t.Data)
 	if err != nil {
 		panic(err)
 	}
 
-	return string(data)
+	return fmt.Sprintf("%s\n%s", string(data), t.Signature)
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/crypto/ssh"
 )
 
 type mockConfigResponse struct {
@@ -96,6 +97,36 @@ func (m *mockGithubResponse) getMock(controller *gomock.Controller) *mock.MockGi
 	return mck
 }
 
+type mockKeyLoader struct {
+	signature string
+	err       error
+}
+
+func (m *mockKeyLoader) getMock(controller *gomock.Controller) *mock.MockKeyLoader {
+	mck := mock.NewMockKeyLoader(controller)
+
+	if m.err != nil || m.signature != "" {
+		mck.EXPECT().
+			LoadKey(gomock.Any()).
+			Return(mockSigner(controller, m.signature), m.err)
+	}
+
+	return mck
+}
+
+func mockSigner(controller *gomock.Controller, signature string) *mock.MockSigner {
+	s := mock.NewMockSigner(controller)
+
+	s.EXPECT().
+		Sign(gomock.Any(), gomock.Any()).
+		Return(&ssh.Signature{
+			Blob: []byte(signature),
+		}, nil).
+		AnyTimes()
+
+	return s
+}
+
 func TestCannotReadConfig(t *testing.T) {
 	const (
 		testStore          = "/my/store"
@@ -133,6 +164,9 @@ func TestCannotReadConfig(t *testing.T) {
 			},
 			&commentPrompt{},
 		}
+		testMockKeyLoad = mockKeyLoader{
+			signature: "signed!",
+		}
 	)
 
 	for name, testCase := range map[string]struct {
@@ -140,6 +174,7 @@ func TestCannotReadConfig(t *testing.T) {
 		mockConfigResponse mockConfigResponse
 		mockGithubResponse mockGithubResponse
 		mockPromptResponse mockPromptResponse
+		mockKeyLoader      mockKeyLoader
 		expectError        bool
 	}{
 		"Cannot read config": {
@@ -166,9 +201,18 @@ func TestCannotReadConfig(t *testing.T) {
 			},
 			expectError: true,
 		},
+		"Error loading SSH key": {
+			usernameInput:      testUsername,
+			mockConfigResponse: testMockConfig,
+			mockKeyLoader: mockKeyLoader{
+				err: errors.New("can't load key"),
+			},
+			expectError: true,
+		},
 		"Error getting user": {
 			usernameInput:      "user",
 			mockConfigResponse: testMockConfig,
+			mockKeyLoader:      testMockKeyLoad,
 			mockGithubResponse: mockGithubResponse{
 				mockGetUser: &mockGetUser{
 					expectedUsername: "user",
@@ -180,6 +224,7 @@ func TestCannotReadConfig(t *testing.T) {
 		"Fail trying to get repo": {
 			usernameInput:      testUsername,
 			mockConfigResponse: testMockConfig,
+			mockKeyLoader:      testMockKeyLoad,
 			mockGithubResponse: mockGithubResponse{
 				mockGetUser: testMockGetUser,
 				mockGetRepo: &mockGetRepo{
@@ -194,6 +239,7 @@ func TestCannotReadConfig(t *testing.T) {
 		"Invalid level selection": {
 			usernameInput:      testUsername,
 			mockConfigResponse: testMockConfig,
+			mockKeyLoader:      testMockKeyLoad,
 			mockGithubResponse: testMockGithub,
 			mockPromptResponse: mockPromptResponse{
 				trustPrompt: &trustPrompt{
@@ -205,6 +251,7 @@ func TestCannotReadConfig(t *testing.T) {
 		"Failed trust level prompt": {
 			usernameInput:      testUsername,
 			mockConfigResponse: testMockConfig,
+			mockKeyLoader:      testMockKeyLoad,
 			mockGithubResponse: testMockGithub,
 			mockPromptResponse: mockPromptResponse{
 				trustPrompt: &trustPrompt{
@@ -220,12 +267,14 @@ func TestCannotReadConfig(t *testing.T) {
 			t.Parallel()
 
 			controller := gomock.NewController(t)
+			defer controller.Finish()
 
 			trustCreator := trust.NewTrustCreator(
 				&io.IO{},
 				testCase.mockConfigResponse.getMock(controller),
 				testCase.mockGithubResponse.getMock(controller),
 				testCase.mockPromptResponse.getMock(controller),
+				testCase.mockKeyLoader.getMock(controller),
 			)
 
 			err := trustCreator.CreateTrust(context.Background(), testCase.usernameInput, trust.CreatorOptions{})
@@ -235,8 +284,6 @@ func TestCannotReadConfig(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 			}
-
-			controller.Finish()
 		})
 	}
 }

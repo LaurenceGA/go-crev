@@ -18,6 +18,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/verifier"
 	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
 	"github.com/LaurenceGA/go-crev/mod"
+	"github.com/LaurenceGA/go-crev/ssh"
 )
 
 // Injectors from wire.go:
@@ -62,6 +63,7 @@ func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 	manipulator := config.NewManipulator(filesystem)
 	client := github.NewClient()
 	prompter := prompt.NewPrompter(commandIO)
-	creator := trust.NewTrustCreator(commandIO, manipulator, client, prompter)
+	loader := ssh.NewLoader()
+	creator := trust.NewTrustCreator(commandIO, manipulator, client, prompter, loader)
 	return creator
 }

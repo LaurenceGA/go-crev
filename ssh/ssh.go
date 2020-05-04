@@ -10,6 +10,10 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
+func NewLoader() *Loader {
+	return &Loader{}
+}
+
 type Loader struct{}
 
 func (l *Loader) LoadKey(path string) (ssh.Signer, error) {

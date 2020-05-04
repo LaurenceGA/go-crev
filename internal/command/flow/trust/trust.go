@@ -11,6 +11,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/LaurenceGA/go-crev/proof/trust"
+	"golang.org/x/crypto/ssh"
 )
 
 type ConfigReader interface {
@@ -27,15 +28,21 @@ type Prompter interface {
 	Prompt(string) (string, error)
 }
 
+type KeyLoader interface {
+	LoadKey(string) (ssh.Signer, error)
+}
+
 func NewTrustCreator(commandIO *io.IO,
 	configReader ConfigReader,
 	githubClient Github,
-	prompter Prompter) *Creator {
+	prompter Prompter,
+	keyLoader KeyLoader) *Creator {
 	return &Creator{
 		commandIO:    commandIO,
 		configReader: configReader,
 		githubClient: githubClient,
 		prompter:     prompter,
+		keyLoader:    keyLoader,
 	}
 }
 
@@ -44,6 +51,7 @@ type Creator struct {
 	configReader ConfigReader
 	githubClient Github
 	prompter     Prompter
+	keyLoader    KeyLoader
 }
 
 type CreatorOptions struct {
@@ -56,7 +64,10 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 		return err
 	}
 
-	// Load local SSH key (verify?)
+	sshKeySigner, err := t.keyLoader.LoadKey(options.IdentityFile)
+	if err != nil {
+		return fmt.Errorf("loading SSH key: %w", err)
+	}
 
 	username := strings.TrimPrefix(usernameRaw, "@")
 
@@ -80,9 +91,12 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 
 	trustObj := trust.New(*config.CurrentID, trustLevel, trustComment)
 
+	if err := trustObj.Sign(sshKeySigner); err != nil {
+		return err
+	}
+
 	fmt.Println(trustObj)
 
-	// Sign
 	// Write file
 	// Commit
 
