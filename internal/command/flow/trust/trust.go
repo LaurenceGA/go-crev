@@ -33,7 +33,7 @@ type KeyLoader interface {
 }
 
 type StoreWriter interface {
-	SaveTrust(*trust.Trust) error
+	SaveTrust(*store.ProofStore, *trust.Trust) error
 }
 
 func NewTrustCreator(commandIO *io.IO,
@@ -102,12 +102,11 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 		return err
 	}
 
-	// userStore := store.ProofStore{Dir: config.CurrentStore}
+	userStore := &store.ProofStore{Dir: config.CurrentStore}
 
-	fmt.Println(trustObj)
-
-	// Write file
-	// Commit
+	if err := t.storeWriter.SaveTrust(userStore, trustObj); err != nil {
+		return fmt.Errorf("saving trust: %w", err)
+	}
 
 	return nil
 }

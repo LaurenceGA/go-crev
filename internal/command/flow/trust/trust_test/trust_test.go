@@ -127,10 +127,17 @@ func mockSigner(controller *gomock.Controller, signature string) *mock.MockSigne
 	return s
 }
 
-type mockStoreWriter struct{}
+type mockStoreWriter struct {
+	expectedSuccess bool
+	err             error
+}
 
 func (m *mockStoreWriter) getMock(controller *gomock.Controller) *mock.MockStoreWriter {
 	mck := mock.NewMockStoreWriter(controller)
+
+	if m.expectedSuccess || m.err != nil {
+		mck.EXPECT().SaveTrust(gomock.Any(), gomock.Any()).Return(m.err)
+	}
 
 	return mck
 }
@@ -174,6 +181,9 @@ func TestCannotReadConfig(t *testing.T) {
 		}
 		testMockKeyLoad = mockKeyLoader{
 			signature: "signed!",
+		}
+		testStoreWriter = mockStoreWriter{
+			expectedSuccess: true,
 		}
 	)
 
@@ -243,6 +253,7 @@ func TestCannotReadConfig(t *testing.T) {
 				},
 			},
 			mockPromptResponse: testPrompt,
+			mockStoreWriter:    testStoreWriter,
 			expectError:        false, // Error is non-fatal
 		},
 		"Invalid level selection": {
@@ -268,6 +279,26 @@ func TestCannotReadConfig(t *testing.T) {
 				},
 			},
 			expectError: true,
+		},
+		"Failed to write to store": {
+			usernameInput:      testUsername,
+			mockConfigResponse: testMockConfig,
+			mockKeyLoader:      testMockKeyLoad,
+			mockGithubResponse: testMockGithub,
+			mockPromptResponse: testPrompt,
+			mockStoreWriter: mockStoreWriter{
+				err: errors.New("nope"),
+			},
+			expectError: true,
+		},
+		"Test success": {
+			usernameInput:      testUsername,
+			mockConfigResponse: testMockConfig,
+			mockKeyLoader:      testMockKeyLoad,
+			mockGithubResponse: testMockGithub,
+			mockPromptResponse: testPrompt,
+			mockStoreWriter:    testStoreWriter,
+			expectError:        false,
 		},
 	} {
 		testCase := testCase

@@ -8,6 +8,7 @@ import (
 	context "context"
 	config "github.com/LaurenceGA/go-crev/internal/config"
 	github "github.com/LaurenceGA/go-crev/internal/github"
+	store "github.com/LaurenceGA/go-crev/internal/store"
 	trust "github.com/LaurenceGA/go-crev/proof/trust"
 	gomock "github.com/golang/mock/gomock"
 	ssh "golang.org/x/crypto/ssh"
@@ -220,15 +221,15 @@ func (m *MockStoreWriter) EXPECT() *MockStoreWriterMockRecorder {
 }
 
 // SaveTrust mocks base method
-func (m *MockStoreWriter) SaveTrust(arg0 *trust.Trust) error {
+func (m *MockStoreWriter) SaveTrust(arg0 *store.ProofStore, arg1 *trust.Trust) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SaveTrust", arg0)
+	ret := m.ctrl.Call(m, "SaveTrust", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // SaveTrust indicates an expected call of SaveTrust
-func (mr *MockStoreWriterMockRecorder) SaveTrust(arg0 interface{}) *gomock.Call {
+func (mr *MockStoreWriterMockRecorder) SaveTrust(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveTrust", reflect.TypeOf((*MockStoreWriter)(nil).SaveTrust), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveTrust", reflect.TypeOf((*MockStoreWriter)(nil).SaveTrust), arg0, arg1)
 }
