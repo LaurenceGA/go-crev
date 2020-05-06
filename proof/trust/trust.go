@@ -67,9 +67,9 @@ type Trust struct {
 }
 
 type Data struct {
+	proof.CommonData `yaml:",inline"`
 	Level            Level
 	Comment          string
-	proof.CommonData `yaml:",inline"`
 }
 
 func (t *Trust) Sign(signer ssh.Signer) error {
@@ -97,8 +97,8 @@ func (t *Trust) MarshalData() ([]byte, error) {
 	return data, nil
 }
 
-func (t *Trust) MarshalSignature() string {
-	return t.Signature
+func (t *Trust) MarshalSignature() []byte {
+	return []byte(t.Signature)
 }
 
 func (t *Trust) String() string {
