@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/LaurenceGA/go-crev/internal/id"
 	"github.com/LaurenceGA/go-crev/internal/store"
@@ -58,7 +59,11 @@ func getRelativeTrustPath(tr *trust.Trust) (string, error) {
 		return "", fmt.Errorf("creating trust path: %w", err)
 	}
 
-	return filepath.Join(idName, trustsPath, "test"+proofFileExtension), nil
+	return filepath.Join(idName, trustsPath, yearMonthTimestamp(), "test"+proofFileExtension), nil
+}
+
+func yearMonthTimestamp() string {
+	return time.Now().Format("2006-01")
 }
 
 func findIDName(i *id.ID) (string, error) {
