@@ -220,18 +220,9 @@ func TestCannotReadConfig(t *testing.T) {
 			},
 			expectError: true,
 		},
-		"Error loading SSH key": {
-			usernameInput:      testUsername,
-			mockConfigResponse: testMockConfig,
-			mockKeyLoader: mockKeyLoader{
-				err: errors.New("can't load key"),
-			},
-			expectError: true,
-		},
 		"Error getting user": {
 			usernameInput:      "user",
 			mockConfigResponse: testMockConfig,
-			mockKeyLoader:      testMockKeyLoad,
 			mockGithubResponse: mockGithubResponse{
 				mockGetUser: &mockGetUser{
 					expectedUsername: "user",
@@ -243,7 +234,6 @@ func TestCannotReadConfig(t *testing.T) {
 		"Fail trying to get repo": {
 			usernameInput:      testUsername,
 			mockConfigResponse: testMockConfig,
-			mockKeyLoader:      testMockKeyLoad,
 			mockGithubResponse: mockGithubResponse{
 				mockGetUser: testMockGetUser,
 				mockGetRepo: &mockGetRepo{
@@ -252,15 +242,25 @@ func TestCannotReadConfig(t *testing.T) {
 					err:           errors.New("can't talk to Github"),
 				},
 			},
+			mockKeyLoader:      testMockKeyLoad,
 			mockPromptResponse: testPrompt,
 			mockStoreWriter:    testStoreWriter,
 			expectError:        false, // Error is non-fatal
 		},
+		"Error loading SSH key": {
+			usernameInput:      testUsername,
+			mockConfigResponse: testMockConfig,
+			mockGithubResponse: testMockGithub,
+			mockKeyLoader: mockKeyLoader{
+				err: errors.New("can't load key"),
+			},
+			expectError: true,
+		},
 		"Invalid level selection": {
 			usernameInput:      testUsername,
 			mockConfigResponse: testMockConfig,
-			mockKeyLoader:      testMockKeyLoad,
 			mockGithubResponse: testMockGithub,
+			mockKeyLoader:      testMockKeyLoad,
 			mockPromptResponse: mockPromptResponse{
 				trustPrompt: &trustPrompt{
 					selection: "Not a level",
@@ -271,8 +271,8 @@ func TestCannotReadConfig(t *testing.T) {
 		"Failed trust level prompt": {
 			usernameInput:      testUsername,
 			mockConfigResponse: testMockConfig,
-			mockKeyLoader:      testMockKeyLoad,
 			mockGithubResponse: testMockGithub,
+			mockKeyLoader:      testMockKeyLoad,
 			mockPromptResponse: mockPromptResponse{
 				trustPrompt: &trustPrompt{
 					err: errors.New("nope"),
@@ -283,8 +283,8 @@ func TestCannotReadConfig(t *testing.T) {
 		"Failed to write to store": {
 			usernameInput:      testUsername,
 			mockConfigResponse: testMockConfig,
-			mockKeyLoader:      testMockKeyLoad,
 			mockGithubResponse: testMockGithub,
+			mockKeyLoader:      testMockKeyLoad,
 			mockPromptResponse: testPrompt,
 			mockStoreWriter: mockStoreWriter{
 				err: errors.New("nope"),
@@ -294,8 +294,8 @@ func TestCannotReadConfig(t *testing.T) {
 		"Test success": {
 			usernameInput:      testUsername,
 			mockConfigResponse: testMockConfig,
-			mockKeyLoader:      testMockKeyLoad,
 			mockGithubResponse: testMockGithub,
+			mockKeyLoader:      testMockKeyLoad,
 			mockPromptResponse: testPrompt,
 			mockStoreWriter:    testStoreWriter,
 			expectError:        false,

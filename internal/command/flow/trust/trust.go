@@ -73,11 +73,6 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 		return err
 	}
 
-	sshKeySigner, err := t.keyLoader.LoadKey(options.IdentityFile)
-	if err != nil {
-		return fmt.Errorf("loading SSH key: %w", err)
-	}
-
 	username := strings.TrimPrefix(usernameRaw, "@")
 
 	usr, err := t.githubClient.GetUser(ctx, username)
@@ -86,6 +81,11 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 	}
 
 	idURL := t.getUserIDURL(ctx, usr.Login)
+
+	sshKeySigner, err := t.keyLoader.LoadKey(options.IdentityFile)
+	if err != nil {
+		return fmt.Errorf("loading SSH key: %w", err)
+	}
 
 	trusteeID := &id.ID{
 		ID:    strconv.Itoa(int(usr.ID)),
