@@ -87,6 +87,7 @@ func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 
 		wire.Bind(new(trust.KeyLoader), new(*ssh.Loader)),
 		ssh.NewLoader,
+		wire.Bind(new(ssh.Prompter), new(*prompt.Prompter)),
 
 		wire.Bind(new(trust.StoreWriter), new(*writer.Writer)),
 		writer.New,

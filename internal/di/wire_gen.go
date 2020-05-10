@@ -64,7 +64,7 @@ func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 	manipulator := config.NewManipulator(filesystem)
 	client := github.NewClient()
 	prompter := prompt.NewPrompter(commandIO)
-	loader := ssh.NewLoader()
+	loader := ssh.NewLoader(prompter)
 	writerWriter := writer.New()
 	creator := trust.NewTrustCreator(commandIO, manipulator, client, prompter, loader, writerWriter)
 	return creator

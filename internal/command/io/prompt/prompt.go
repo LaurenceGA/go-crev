@@ -44,6 +44,19 @@ func (p *Prompter) Prompt(label string) (string, error) {
 	return prompt.Run()
 }
 
+const passwordMask = '*'
+
+func (p *Prompter) Password(label string) (string, error) {
+	prompt := promptui.Prompt{
+		Label:  label,
+		Stdin:  ioutil.NopCloser(p.commandIO.In()),
+		Stdout: noopCloser(p.commandIO.Out()),
+		Mask:   passwordMask,
+	}
+
+	return prompt.Run()
+}
+
 func noopCloser(w stdio.Writer) stdio.WriteCloser {
 	return &noopWriteCloser{w}
 }

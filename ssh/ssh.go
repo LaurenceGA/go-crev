@@ -10,11 +10,19 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-func NewLoader() *Loader {
-	return &Loader{}
+type Prompter interface {
+	Password(string) (string, error)
 }
 
-type Loader struct{}
+func NewLoader(prompter Prompter) *Loader {
+	return &Loader{
+		prompter: prompter,
+	}
+}
+
+type Loader struct {
+	prompter Prompter
+}
 
 func (l *Loader) LoadKey(path string) (ssh.Signer, error) {
 	keyPath, err := findValidKeyPath(path)
@@ -27,13 +35,35 @@ func (l *Loader) LoadKey(path string) (ssh.Signer, error) {
 		return nil, fmt.Errorf("reading key file: %w", err)
 	}
 
-	signer, err := ssh.ParsePrivateKey(key)
+	signer, err := l.parsePrivateKey(key, keyPath)
 	if err != nil {
-		// TODO: check if encrypted
 		return nil, fmt.Errorf("parsing key: %w", err)
 	}
 
 	return signer, nil
+}
+
+func (l *Loader) parsePrivateKey(key []byte, keyPath string) (ssh.Signer, error) {
+	signer, err := ssh.ParsePrivateKey(key)
+	if err != nil {
+		var perr *ssh.PassphraseMissingError
+		if errors.As(err, &perr) {
+			return l.parsePrivateKeyWithPassphrase(key, keyPath)
+		}
+
+		return nil, err
+	}
+
+	return signer, nil
+}
+
+func (l *Loader) parsePrivateKeyWithPassphrase(key []byte, keyPath string) (ssh.Signer, error) {
+	password, err := l.prompter.Password(fmt.Sprintf("Passphrase for %s", keyPath))
+	if err != nil {
+		return nil, err
+	}
+
+	return ssh.ParsePrivateKeyWithPassphrase(key, []byte(password))
 }
 
 func findValidKeyPath(path string) (string, error) {
