@@ -46,9 +46,10 @@ func ToLevel(s string) (Level, bool) {
 	return l, ok
 }
 
-func New(from id.ID, level Level, comment string) *Trust {
+func New(from id.ID, level Level, comment string, ids []*id.ID) *Trust {
 	return &Trust{
 		Data: Data{
+			IDs:     ids,
 			Level:   level,
 			Comment: comment,
 			CommonData: proof.CommonData{
@@ -68,8 +69,9 @@ type Trust struct {
 
 type Data struct {
 	proof.CommonData `yaml:",inline"`
-	Level            Level
-	Comment          string
+	IDs              []*id.ID `yaml:"ids"`
+	Level            Level    `yaml:"level"`
+	Comment          string   `yaml:"comment,omitempty"`
 }
 
 func (t *Trust) Sign(signer ssh.Signer) error {

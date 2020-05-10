@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/github"
+	"github.com/LaurenceGA/go-crev/internal/id"
 	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/LaurenceGA/go-crev/proof/trust"
 	"golang.org/x/crypto/ssh"
@@ -84,7 +86,13 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 	}
 
 	idURL := t.getUserIDURL(ctx, usr.Login)
-	fmt.Println(idURL)
+
+	trusteeID := &id.ID{
+		ID:    strconv.Itoa(int(usr.ID)),
+		Type:  id.Github,
+		URL:   idURL,
+		Alias: usr.Login,
+	}
 
 	trustLevel, err := t.getTrustLevel()
 	if err != nil {
@@ -96,7 +104,7 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 		return err
 	}
 
-	trustObj := trust.New(*config.CurrentID, trustLevel, trustComment)
+	trustObj := trust.New(*config.CurrentID, trustLevel, trustComment, []*id.ID{trusteeID})
 
 	if err := trustObj.Sign(sshKeySigner); err != nil {
 		return err
