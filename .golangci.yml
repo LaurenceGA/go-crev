@@ -5,6 +5,14 @@ linters-settings:
     min-complexity: 10
   godot:
     check-all: true
+  nestif:
+    min-complexity: 3
+  gomodguard:
+    allowed:
+      domains:
+        - github.com
+        - golang.org
+        - gopkg.in
 
 linters:
   disable-all: true
@@ -53,6 +61,7 @@ linters:
     - asciicheck
     - godot
     - goerr113
+    - gomodguard
 
 issues:
   exclude-rules:
