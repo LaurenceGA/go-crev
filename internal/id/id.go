@@ -9,7 +9,8 @@ const (
 )
 
 type ID struct {
-	ID   string       `yaml:"id,omitempty"`
-	Type CrevIdentity `yaml:"id-type,omitempty"`
-	URL  string       `yaml:"url,omitempty"`
+	ID    string       `yaml:"id,omitempty"`
+	Type  CrevIdentity `yaml:"id-type,omitempty"`
+	URL   string       `yaml:"url,omitempty"`
+	Alias string       `yaml:"alias,omitempty"`
 }

@@ -48,10 +48,6 @@ type IDSetter struct {
 	repoFetcher       RepoFetcher
 }
 
-// This is expected to be a well known name
-// Repo doesn't have to be this name, but if it is we can automatically find it
-const standardCrevProofRepoName = "crev-proofs"
-
 // SetFromUsername takes a username input and sets our local current ID to that by finding
 // resolving the ID from the username.
 // By default we assume it's a Github ID
@@ -66,20 +62,21 @@ func (i *IDSetter) SetFromUsername(ctx context.Context, usernameRaw string) erro
 	idStoreURL := i.loadExistingStandardRepo(ctx, usr.Login)
 
 	return i.configManipulator.SetCurrentID(&id.ID{
-		ID:   strconv.Itoa(int(usr.ID)),
-		Type: id.Github,
-		URL:  idStoreURL,
+		ID:    strconv.Itoa(int(usr.ID)),
+		Type:  id.Github,
+		URL:   idStoreURL,
+		Alias: usr.Login,
 	})
 }
 
 func (i *IDSetter) loadExistingStandardRepo(ctx context.Context, owner string) string {
-	repo, err := i.githubUser.GetRepository(ctx, owner, standardCrevProofRepoName)
+	repo, err := i.githubUser.GetRepository(ctx, owner, store.StandardCrevProofRepoName)
 	if err != nil {
 		if errors.Is(err, github.NotFoundError) {
 			fmt.Fprintf(i.commandIO.Out(),
 				"Couldn't find proof repo in Github for %s/%s. You should make one here...\n",
 				owner,
-				standardCrevProofRepoName)
+				store.StandardCrevProofRepoName)
 		} else {
 			// Non-fatal. Just print and move on...
 			fmt.Fprintf(i.commandIO.Err(), "Failed trying to find repository with error: %v\n", err)

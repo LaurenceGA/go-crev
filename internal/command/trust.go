@@ -1,11 +1,16 @@
 package command
 
 import (
+	"github.com/LaurenceGA/go-crev/internal/command/flow/trust"
 	"github.com/LaurenceGA/go-crev/internal/di"
 	"github.com/spf13/cobra"
 )
 
-const expectedTrustArguments = 1
+const (
+	expectedTrustArguments = 1
+
+	identityFileFlagName = "identity-file"
+)
 
 func NewTrustCommand() *cobra.Command {
 	trustCmd := &cobra.Command{
@@ -15,6 +20,11 @@ func NewTrustCommand() *cobra.Command {
 		Args:  cobra.ExactArgs(expectedTrustArguments),
 	}
 
+	trustCmd.Flags().StringP(identityFileFlagName,
+		"i",
+		"",
+		"identity file (private key) location to use for signing")
+
 	return trustCmd
 }
 
@@ -22,5 +32,15 @@ func NewTrustCommand() *cobra.Command {
 func newTrust(cmd *cobra.Command, args []string) error {
 	trustCreator := di.InitialiseTrustCreator(ioFromCommand(cmd))
 
-	return trustCreator.CreateTrust(cmd.Context(), args[0])
+	idFilepath, err := cmd.Flags().GetString(identityFileFlagName)
+	if err != nil {
+		return err
+	}
+
+	return trustCreator.CreateTrust(
+		cmd.Context(),
+		args[0],
+		trust.CreatorOptions{
+			IdentityFile: idFilepath,
+		})
 }

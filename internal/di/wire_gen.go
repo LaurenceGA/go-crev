@@ -9,14 +9,17 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/command/flow/idset"
 	"github.com/LaurenceGA/go-crev/internal/command/flow/trust"
 	"github.com/LaurenceGA/go-crev/internal/command/io"
+	"github.com/LaurenceGA/go-crev/internal/command/io/prompt"
 	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/store/fetcher"
+	"github.com/LaurenceGA/go-crev/internal/store/writer"
 	"github.com/LaurenceGA/go-crev/internal/verifier"
 	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
 	"github.com/LaurenceGA/go-crev/mod"
+	"github.com/LaurenceGA/go-crev/ssh"
 )
 
 // Injectors from wire.go:
@@ -55,7 +58,14 @@ func InitialiseIDSetterFlow(commandIO *io.IO) *idset.IDSetter {
 	return idSetter
 }
 
-func InitialiseTrustCreator(commandIO *io.IO) *trust.TrustCreator {
-	trustCreator := trust.NewTrustCreator(commandIO)
-	return trustCreator
+func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
+	scope := files.NewUserScope()
+	filesystem := files.NewFilesystem(scope)
+	manipulator := config.NewManipulator(filesystem)
+	client := github.NewClient()
+	prompter := prompt.NewPrompter(commandIO)
+	loader := ssh.NewLoader(prompter)
+	writerWriter := writer.New()
+	creator := trust.NewTrustCreator(commandIO, manipulator, client, prompter, loader, writerWriter)
+	return creator
 }

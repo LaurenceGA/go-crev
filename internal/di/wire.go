@@ -7,14 +7,17 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/command/flow/idset"
 	"github.com/LaurenceGA/go-crev/internal/command/flow/trust"
 	"github.com/LaurenceGA/go-crev/internal/command/io"
+	"github.com/LaurenceGA/go-crev/internal/command/io/prompt"
 	"github.com/LaurenceGA/go-crev/internal/config"
 	"github.com/LaurenceGA/go-crev/internal/files"
 	"github.com/LaurenceGA/go-crev/internal/git"
 	"github.com/LaurenceGA/go-crev/internal/github"
 	"github.com/LaurenceGA/go-crev/internal/store/fetcher"
+	"github.com/LaurenceGA/go-crev/internal/store/writer"
 	"github.com/LaurenceGA/go-crev/internal/verifier"
 	"github.com/LaurenceGA/go-crev/internal/verifier/cloc"
 	"github.com/LaurenceGA/go-crev/mod"
+	"github.com/LaurenceGA/go-crev/ssh"
 	"github.com/google/wire"
 )
 
@@ -65,8 +68,28 @@ func InitialiseIDSetterFlow(commandIO *io.IO) *idset.IDSetter {
 	))
 }
 
-func InitialiseTrustCreator(commandIO *io.IO) *trust.TrustCreator {
+func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 	panic(wire.Build(
 		trust.NewTrustCreator,
+
+		wire.Bind(new(trust.ConfigReader), new(*config.Manipulator)),
+		config.NewManipulator,
+
+		wire.Bind(new(files.AppDirs), new(*files.Filesystem)),
+		files.NewFilesystem,
+		files.NewUserScope,
+
+		wire.Bind(new(trust.Github), new(*github.Client)),
+		github.NewClient,
+
+		wire.Bind(new(trust.Prompter), new(*prompt.Prompter)),
+		prompt.NewPrompter,
+
+		wire.Bind(new(trust.KeyLoader), new(*ssh.Loader)),
+		ssh.NewLoader,
+		wire.Bind(new(ssh.Prompter), new(*prompt.Prompter)),
+
+		wire.Bind(new(trust.StoreWriter), new(*writer.Writer)),
+		writer.New,
 	))
 }
