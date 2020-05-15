@@ -15,10 +15,10 @@ func New() *Counter {
 type Counter struct {
 }
 
-const goLanguageKey = "Go"
-
 // CountLines counts the lines of go source code in dir.
 func (c *Counter) CountLines(dir string) (int, error) {
+	const goLanguageKey = "Go"
+
 	if dir == "" {
 		return -1, errors.New("invalid directory")
 	}
