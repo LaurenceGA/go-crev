@@ -62,6 +62,7 @@ linters:
     - godot
     - goerr113
     - gomodguard
+    - nestif
 
 issues:
   exclude-rules:
