@@ -63,6 +63,7 @@ linters:
     - goerr113
     - gomodguard
     - nestif
+    - nolintlint
 
 issues:
   exclude-rules:
