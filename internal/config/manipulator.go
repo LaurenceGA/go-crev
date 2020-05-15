@@ -50,7 +50,7 @@ func (m *Manipulator) Save(conf *Configuration) error {
 		return fmt.Errorf("marshalling configuration: %w", err)
 	}
 
-	if err := ioutil.WriteFile(configFilepath, data, 0666); err != nil {
+	if err := ioutil.WriteFile(configFilepath, data, 0600); err != nil {
 		return fmt.Errorf("writing config file: %w", err)
 	}
 

@@ -40,7 +40,7 @@ func (w *Writer) SaveTrust(dstStore *store.ProofStore, tr *trust.Trust) error {
 		return err
 	}
 
-	if err := ioutil.WriteFile(trustPath, marshalled, 0644); err != nil {
+	if err := ioutil.WriteFile(trustPath, marshalled, 0600); err != nil {
 		return fmt.Errorf("writing trust file: %w", err)
 	}
 
