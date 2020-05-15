@@ -89,7 +89,7 @@ func findValidKeyPath(path string) (string, error) {
 	return "", errors.New("no SSH key found")
 }
 
-// Well known .ssh directory for all things ssh
+// Well known .ssh directory for all things ssh.
 const sshDir = ".ssh"
 
 func keySSHPath(home, keyFileName string) string {

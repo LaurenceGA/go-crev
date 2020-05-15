@@ -1,4 +1,4 @@
-// Package files directs the management of files owned by the application
+// Package files directs the management of files owned by the application.
 package files
 
 import (

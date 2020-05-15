@@ -28,7 +28,7 @@ func NewTrustCommand() *cobra.Command {
 	return trustCmd
 }
 
-// args must have length equal to 1. This is ensured by cobra
+// args must have length equal to 1. This is ensured by cobra.
 func newTrust(cmd *cobra.Command, args []string) error {
 	trustCreator := di.InitialiseTrustCreator(ioFromCommand(cmd))
 

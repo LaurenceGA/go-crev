@@ -31,7 +31,7 @@ func NewFetchCommand() *cobra.Command {
 	}
 }
 
-// args must have length equal to 1. This is ensured by cobra
+// args must have length equal to 1. This is ensured by cobra.
 func fetchStore(cmd *cobra.Command, args []string) error {
 	fetcher := di.InitialiseStoreFetcher(ioFromCommand(cmd))
 
@@ -51,7 +51,7 @@ func NewSetCurrentStoreCommand() *cobra.Command {
 	}
 }
 
-// args must have length equal to 1. This is ensured by cobra
+// args must have length equal to 1. This is ensured by cobra.
 func setCurrentStore(cmd *cobra.Command, args []string) error {
 	configManipulator := di.InitialiseConfigManipulator()
 

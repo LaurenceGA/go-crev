@@ -12,14 +12,14 @@ type Repository struct {
 	repo *git.Repository
 }
 
-// NewClient construct a new client
+// NewClient construct a new client.
 func NewClient(commandIO *io.IO) *Client {
 	return &Client{
 		commandIO: commandIO,
 	}
 }
 
-// Client wraps the go-git API
+// Client wraps the go-git API.
 type Client struct {
 	commandIO *io.IO
 }

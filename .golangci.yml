@@ -3,6 +3,8 @@ linters-settings:
     min-complexity: 10
   gocyclo:
     min-complexity: 10
+  godot:
+    check-all: true
 
 linters:
   disable-all: true
@@ -48,6 +50,8 @@ linters:
     - maligned
     - prealloc
     - wsl
+    - asciicheck
+    - godot
 
 issues:
   exclude-rules:

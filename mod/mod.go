@@ -42,8 +42,8 @@ func (l *Lister) List() ([]*Module, error) {
 	}
 }
 
-// Module holds information about a specific module listed by go list
-// Copied from documentation from "go help list"
+// Module holds information about a specific module listed by go list.
+// Copied from documentation from "go help list".
 type Module struct {
 	Path      string       `json:",omitempty"` // module path
 	Version   string       `json:",omitempty"` // module version
@@ -59,7 +59,7 @@ type Module struct {
 	Error     *ModuleError `json:",omitempty"` // error loading module
 }
 
-// ModuleError represents the error when a module cannot be loaded
+// ModuleError represents the error when a module cannot be loaded.
 type ModuleError struct {
 	Err string // the error itself
 }

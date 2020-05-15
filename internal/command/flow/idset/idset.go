@@ -40,7 +40,7 @@ func NewIDSetter(commandIO *io.IO,
 	}
 }
 
-// IDSetter is responsible for high level flow of setting of a user's ID
+// IDSetter is responsible for high level flow of setting of a user's ID.
 type IDSetter struct {
 	commandIO         *io.IO
 	configManipulator ConfigManipulator
@@ -50,7 +50,7 @@ type IDSetter struct {
 
 // SetFromUsername takes a username input and sets our local current ID to that by finding
 // resolving the ID from the username.
-// By default we assume it's a Github ID
+// By default we assume it's a Github ID.
 func (i *IDSetter) SetFromUsername(ctx context.Context, usernameRaw string) error {
 	username := strings.TrimPrefix(usernameRaw, "@")
 
