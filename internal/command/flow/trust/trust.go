@@ -13,6 +13,7 @@ import (
 	"github.com/LaurenceGA/go-crev/internal/id"
 	"github.com/LaurenceGA/go-crev/internal/store"
 	"github.com/LaurenceGA/go-crev/proof/trust"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -104,7 +105,7 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 		return err
 	}
 
-	trustObj := trust.New(*config.CurrentID, trustLevel, trustComment, []*id.ID{trusteeID})
+	trustObj := trust.New(uuid.New().String(), *config.CurrentID, trustLevel, trustComment, []*id.ID{trusteeID})
 
 	if err := trustObj.Sign(sshKeySigner); err != nil {
 		return err

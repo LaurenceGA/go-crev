@@ -46,18 +46,19 @@ func ToLevel(s string) (Level, bool) {
 	return l, ok
 }
 
-func New(from id.ID, level Level, comment string, ids []*id.ID) *Trust {
+func New(id string, from id.ID, level Level, comment string, ids []*id.ID) *Trust {
 	return &Trust{
 		Data: Data{
-			IDs:     ids,
-			Level:   level,
-			Comment: comment,
 			CommonData: proof.CommonData{
+				ID:      id,
 				Kind:    proof.Trust,
 				Version: TrustVersion,
 				Date:    time.Now(),
 				From:    from,
 			},
+			IDs:     ids,
+			Level:   level,
+			Comment: comment,
 		},
 	}
 }

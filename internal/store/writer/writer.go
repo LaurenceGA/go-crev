@@ -59,7 +59,7 @@ func getRelativeTrustPath(tr *trust.Trust) (string, error) {
 		return "", fmt.Errorf("creating trust path: %w", err)
 	}
 
-	return filepath.Join(idName, trustsPath, yearMonthTimestamp(), "test"+proofFileExtension), nil
+	return filepath.Join(idName, trustsPath, yearMonthTimestamp(), tr.Data.ID+proofFileExtension), nil
 }
 
 func yearMonthTimestamp() string {

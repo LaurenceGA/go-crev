@@ -21,6 +21,7 @@ type Proof interface {
 }
 
 type CommonData struct {
+	ID      string    `yaml:"id"`
 	Kind    Kind      `yaml:"kind"`
 	Version int       `yaml:"version"`
 	Date    time.Time `yaml:"date"`
