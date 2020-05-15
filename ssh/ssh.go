@@ -24,6 +24,14 @@ type Loader struct {
 	prompter Prompter
 }
 
+type constError string
+
+func (e constError) Error() string {
+	return string(e)
+}
+
+const SSHKeyNotFound constError = "ssh key not found"
+
 func (l *Loader) LoadKey(path string) (ssh.Signer, error) {
 	keyPath, err := findValidKeyPath(path)
 	if err != nil {
@@ -86,7 +94,7 @@ func findValidKeyPath(path string) (string, error) {
 		}
 	}
 
-	return "", errors.New("no SSH key found")
+	return "", SSHKeyNotFound
 }
 
 // Well known .ssh directory for all things ssh.

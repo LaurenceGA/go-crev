@@ -152,17 +152,34 @@ func (t *Creator) getUserIDURL(ctx context.Context, username string) string {
 	return repo.HTMLurl
 }
 
+type constError string
+
+func (e constError) Error() string {
+	return string(e)
+}
+
+const (
+	ErrCurrentStoreEmpty constError = "user current store is empty"
+	ErrCurrentIDNotSet   constError = "user current ID not set"
+)
+
 func validateConfig(c *config.Configuration) error {
 	// Should check if location exists in filesystem?
 	if c.CurrentStore == "" {
-		return errors.New("user current store is empty")
+		return ErrCurrentStoreEmpty
 	}
 
 	if c.CurrentID == nil {
-		return errors.New("user current ID not set")
+		return ErrCurrentIDNotSet
 	}
 
 	return nil
+}
+
+type InvalidLevelError string
+
+func (e InvalidLevelError) Error() string {
+	return fmt.Sprintf("invalid level: %s", string(e))
 }
 
 func (t *Creator) getTrustLevel() (trust.Level, error) {
@@ -173,7 +190,7 @@ func (t *Creator) getTrustLevel() (trust.Level, error) {
 
 	level, ok := trust.ToLevel(levelResponse)
 	if !ok {
-		return "", errors.New("invalid level: " + levelResponse)
+		return "", InvalidLevelError(levelResponse)
 	}
 
 	return level, nil

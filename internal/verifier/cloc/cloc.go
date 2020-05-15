@@ -2,7 +2,6 @@
 package cloc
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/hhatto/gocloc"
@@ -15,12 +14,20 @@ func New() *Counter {
 type Counter struct {
 }
 
+type constError string
+
+func (e constError) Error() string {
+	return string(e)
+}
+
+const InvalidDirectory constError = "invalid directory"
+
 // CountLines counts the lines of go source code in dir.
 func (c *Counter) CountLines(dir string) (int, error) {
 	const goLanguageKey = "Go"
 
 	if dir == "" {
-		return -1, errors.New("invalid directory")
+		return -1, InvalidDirectory
 	}
 
 	clocOpts := gocloc.NewClocOptions()

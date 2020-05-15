@@ -1,7 +1,6 @@
 package writer
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -22,6 +21,14 @@ func New() *Writer {
 }
 
 type Writer struct{}
+
+type constError string
+
+func (e constError) Error() string {
+	return string(e)
+}
+
+const NoValidIDOrAlias constError = "no valid ID or alias"
 
 func (w *Writer) SaveTrust(dstStore *store.ProofStore, tr *trust.Trust) error {
 	relPath, err := getRelativeTrustPath(tr)
@@ -49,9 +56,20 @@ func (w *Writer) SaveTrust(dstStore *store.ProofStore, tr *trust.Trust) error {
 	return nil
 }
 
+type TrustFromIDTypeError struct {
+	wanted, got id.CrevIdentity
+}
+
+func (e TrustFromIDTypeError) Error() string {
+	return fmt.Sprintf("can't save trust of type %s, must be %s", e.got, e.wanted)
+}
+
 func getRelativeTrustPath(tr *trust.Trust) (string, error) {
 	if tr.Data.From.Type != id.Github {
-		return "", fmt.Errorf("can't save trust of type %s, must be %s", tr.Data.From.Type, id.Github)
+		return "", TrustFromIDTypeError{
+			wanted: id.Github,
+			got:    tr.Data.From.Type,
+		}
 	}
 
 	idName, err := findIDName(&tr.Data.From)
@@ -75,5 +93,5 @@ func findIDName(i *id.ID) (string, error) {
 		return i.ID, nil
 	}
 
-	return "", errors.New("no valid ID or alias")
+	return "", NoValidIDOrAlias
 }
