@@ -309,7 +309,7 @@ func TestCannotReadConfig(t *testing.T) {
 			controller := gomock.NewController(t)
 			defer controller.Finish()
 
-			trustCreator := trust.NewTrustCreator(
+			trustCreator := trust.NewCreator(
 				&io.IO{},
 				testCase.mockConfigResponse.getMock(controller),
 				testCase.mockGithubResponse.getMock(controller),

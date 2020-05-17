@@ -70,7 +70,7 @@ func InitialiseIDSetterFlow(commandIO *io.IO) *idset.IDSetter {
 
 func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 	panic(wire.Build(
-		trust.NewTrustCreator,
+		trust.NewCreator,
 
 		wire.Bind(new(trust.ConfigReader), new(*config.Manipulator)),
 		config.NewManipulator,

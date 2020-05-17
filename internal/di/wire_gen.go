@@ -66,6 +66,6 @@ func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 	prompter := prompt.NewPrompter(commandIO)
 	loader := ssh.NewLoader(prompter)
 	writerWriter := writer.New()
-	creator := trust.NewTrustCreator(commandIO, manipulator, client, prompter, loader, writerWriter)
+	creator := trust.NewCreator(commandIO, manipulator, client, prompter, loader, writerWriter)
 	return creator
 }

@@ -39,7 +39,7 @@ type StoreWriter interface {
 	SaveTrust(*store.ProofStore, *trust.Trust) error
 }
 
-func NewTrustCreator(commandIO *io.IO,
+func NewCreator(commandIO *io.IO,
 	configReader ConfigReader,
 	githubClient Github,
 	prompter Prompter,
