@@ -68,22 +68,22 @@ type CreatorOptions struct {
 	IdentityFile string
 }
 
-func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options CreatorOptions) error {
-	config, err := t.loadConfig()
+func (c *Creator) CreateTrust(ctx context.Context, usernameRaw string, options CreatorOptions) error {
+	config, err := c.loadConfig()
 	if err != nil {
 		return err
 	}
 
 	username := strings.TrimPrefix(usernameRaw, "@")
 
-	usr, err := t.githubClient.GetUser(ctx, username)
+	usr, err := c.githubClient.GetUser(ctx, username)
 	if err != nil {
 		return err
 	}
 
-	idURL := t.getUserIDURL(ctx, usr.Login)
+	idURL := c.getUserIDURL(ctx, usr.Login)
 
-	sshKeySigner, err := t.keyLoader.LoadKey(options.IdentityFile)
+	sshKeySigner, err := c.keyLoader.LoadKey(options.IdentityFile)
 	if err != nil {
 		return fmt.Errorf("loading SSH key: %w", err)
 	}
@@ -95,12 +95,12 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 		Alias: usr.Login,
 	}
 
-	trustLevel, err := t.getTrustLevel()
+	trustLevel, err := c.getTrustLevel()
 	if err != nil {
 		return err
 	}
 
-	trustComment, err := t.prompter.Prompt("Comment")
+	trustComment, err := c.prompter.Prompt("Comment")
 	if err != nil {
 		return err
 	}
@@ -113,15 +113,15 @@ func (t *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 
 	userStore := &store.ProofStore{Dir: config.CurrentStore}
 
-	if err := t.storeWriter.SaveTrust(userStore, trustObj); err != nil {
+	if err := c.storeWriter.SaveTrust(userStore, trustObj); err != nil {
 		return fmt.Errorf("saving trust: %w", err)
 	}
 
 	return nil
 }
 
-func (t *Creator) loadConfig() (*config.Configuration, error) {
-	conf, err := t.configReader.Load()
+func (c *Creator) loadConfig() (*config.Configuration, error) {
+	conf, err := c.configReader.Load()
 	if err != nil {
 		return nil, err
 	}
@@ -133,17 +133,17 @@ func (t *Creator) loadConfig() (*config.Configuration, error) {
 	return conf, nil
 }
 
-func (t *Creator) getUserIDURL(ctx context.Context, username string) string {
-	repo, err := t.githubClient.GetRepository(ctx, username, store.StandardCrevProofRepoName)
+func (c *Creator) getUserIDURL(ctx context.Context, username string) string {
+	repo, err := c.githubClient.GetRepository(ctx, username, store.StandardCrevProofRepoName)
 	if err != nil {
 		if errors.Is(err, github.NotFoundError) {
-			fmt.Fprintf(t.commandIO.Out(),
+			fmt.Fprintf(c.commandIO.Out(),
 				"Couldn't find proof repo in Github for %s/%s\n",
 				username,
 				store.StandardCrevProofRepoName)
 		} else {
 			// Non-fatal. Just print and move on...
-			fmt.Fprintf(t.commandIO.Err(), "Failed trying to find repository with error: %v\n", err)
+			fmt.Fprintf(c.commandIO.Err(), "Failed trying to find repository with error: %v\n", err)
 		}
 
 		return "" // No known crev proof URL for ID
@@ -182,8 +182,8 @@ func (e InvalidLevelError) Error() string {
 	return fmt.Sprintf("invalid level: %s", string(e))
 }
 
-func (t *Creator) getTrustLevel() (trust.Level, error) {
-	levelResponse, err := t.prompter.Select("Trust level", trustPrompts())
+func (c *Creator) getTrustLevel() (trust.Level, error) {
+	levelResponse, err := c.prompter.Select("Trust level", trustPrompts())
 	if err != nil {
 		return "", err
 	}
