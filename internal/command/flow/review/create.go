@@ -1,5 +1,7 @@
 package review
 
+import "context"
+
 func NewCreator() *Creator {
 	return &Creator{}
 }
@@ -7,6 +9,10 @@ func NewCreator() *Creator {
 type Creator struct {
 }
 
-func (c *Creator) CreateReview() error {
+type CreatorOptions struct {
+	IdentityFile string
+}
+
+func (c *Creator) CreateReview(ctx context.Context, packageName string, options CreatorOptions) error {
 	return nil
 }

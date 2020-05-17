@@ -1,6 +1,10 @@
 package command
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/LaurenceGA/go-crev/internal/command/flow/review"
+	"github.com/LaurenceGA/go-crev/internal/di"
+	"github.com/spf13/cobra"
+)
 
 func NewReviewCommand() *cobra.Command {
 	reviewCmd := &cobra.Command{
@@ -33,7 +37,7 @@ func NewCreateReviewCommand() *cobra.Command {
 
 // args must have length equal to 1. This is ensured by cobra.
 func createReview(cmd *cobra.Command, args []string) error {
-	// trustCreator := di.InitialiseTrustCreator(ioFromCommand(cmd))
+	reviewCreator := di.InitialiseReviewCreator(ioFromCommand(cmd))
 
 	idFilepath, err := cmd.Flags().GetString(identityFileFlagName)
 	if err != nil {
@@ -42,11 +46,11 @@ func createReview(cmd *cobra.Command, args []string) error {
 
 	_ = idFilepath
 
-	return nil
-	// return trustCreator.CreateTrust(
-	// 	cmd.Context(),
-	// 	args[0],
-	// 	trust.CreatorOptions{
-	// 		IdentityFile: idFilepath,
-	// 	})
+	return reviewCreator.CreateReview(
+		cmd.Context(),
+		args[0],
+		review.CreatorOptions{
+			IdentityFile: idFilepath,
+		},
+	)
 }
