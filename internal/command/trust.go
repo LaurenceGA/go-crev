@@ -6,30 +6,41 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func NewTrustCommand() *cobra.Command {
+	trustCmd := &cobra.Command{
+		Use:   "trust",
+		Short: "Manipulate trust proofs",
+	}
+
+	trustCmd.AddCommand(NewCreateTrustCommand())
+
+	return trustCmd
+}
+
 const (
 	expectedTrustArguments = 1
 
 	identityFileFlagName = "identity-file"
 )
 
-func NewTrustCommand() *cobra.Command {
-	trustCmd := &cobra.Command{
-		Use:   "trust <Github username>",
+func NewCreateTrustCommand() *cobra.Command {
+	createTrustCmd := &cobra.Command{
+		Use:   "create <Github username>",
 		Short: "Create a trust proof for an ID",
-		RunE:  newTrust,
+		RunE:  createTrust,
 		Args:  cobra.ExactArgs(expectedTrustArguments),
 	}
 
-	trustCmd.Flags().StringP(identityFileFlagName,
+	createTrustCmd.Flags().StringP(identityFileFlagName,
 		"i",
 		"",
 		"identity file (private key) location to use for signing")
 
-	return trustCmd
+	return createTrustCmd
 }
 
 // args must have length equal to 1. This is ensured by cobra.
-func newTrust(cmd *cobra.Command, args []string) error {
+func createTrust(cmd *cobra.Command, args []string) error {
 	trustCreator := di.InitialiseTrustCreator(ioFromCommand(cmd))
 
 	idFilepath, err := cmd.Flags().GetString(identityFileFlagName)
