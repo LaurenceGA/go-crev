@@ -5,15 +5,17 @@ import (
 	"os"
 )
 
-func New(in io.Reader, out, err io.Writer) *IO {
+func New(in io.Reader, out, err io.Writer, verbose bool) *IO {
 	return &IO{
-		in:  in,
-		out: out,
-		err: err,
+		Verbose: verbose,
+		in:      in,
+		out:     out,
+		err:     err,
 	}
 }
 
 type IO struct {
+	Verbose  bool
 	in       io.Reader
 	out, err io.Writer
 }

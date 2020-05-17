@@ -37,7 +37,12 @@ func NewCreateReviewCommand() *cobra.Command {
 
 // args must have length equal to 1. This is ensured by cobra.
 func createReview(cmd *cobra.Command, args []string) error {
-	reviewCreator := di.InitialiseReviewCreator(ioFromCommand(cmd))
+	commandIO, err := ioFromCommand(cmd)
+	if err != nil {
+		return err
+	}
+
+	reviewCreator := di.InitialiseReviewCreator(commandIO)
 
 	idFilepath, err := cmd.Flags().GetString(identityFileFlagName)
 	if err != nil {

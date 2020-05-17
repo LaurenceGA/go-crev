@@ -33,9 +33,14 @@ func NewFetchCommand() *cobra.Command {
 
 // args must have length equal to 1. This is ensured by cobra.
 func fetchStore(cmd *cobra.Command, args []string) error {
-	fetcher := di.InitialiseStoreFetcher(ioFromCommand(cmd))
+	commandIO, err := ioFromCommand(cmd)
+	if err != nil {
+		return err
+	}
 
-	_, err := fetcher.Fetch(cmd.Context(), args[0])
+	fetcher := di.InitialiseStoreFetcher(commandIO)
+
+	_, err = fetcher.Fetch(cmd.Context(), args[0])
 
 	return err
 }

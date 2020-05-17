@@ -39,7 +39,12 @@ func NewCreateTrustCommand() *cobra.Command {
 
 // args must have length equal to 1. This is ensured by cobra.
 func createTrust(cmd *cobra.Command, args []string) error {
-	trustCreator := di.InitialiseTrustCreator(ioFromCommand(cmd))
+	commandIO, err := ioFromCommand(cmd)
+	if err != nil {
+		return err
+	}
+
+	trustCreator := di.InitialiseTrustCreator(commandIO)
 
 	idFilepath, err := cmd.Flags().GetString(identityFileFlagName)
 	if err != nil {

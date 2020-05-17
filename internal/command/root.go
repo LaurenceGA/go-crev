@@ -10,7 +10,8 @@ import (
 
 const (
 	// used by flows that sign proofs
-	identityFileFlagName = "identity-file"
+	identityFileFlagName  = "identity-file"
+	verboseOutputFlagName = "verbose"
 )
 
 func NewRootCommand(commandIO *io.IO) *cobra.Command {
@@ -41,7 +42,7 @@ This is version %s, built at %s
 	rootCmd.SetErr(commandIO.Err())
 
 	rootCmd.PersistentFlags().BoolP(
-		"verbose",
+		verboseOutputFlagName,
 		"v",
 		false,
 		"show verbose output",
