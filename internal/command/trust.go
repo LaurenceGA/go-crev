@@ -49,5 +49,6 @@ func createTrust(cmd *cobra.Command, args []string) error {
 		args[0],
 		trust.CreatorOptions{
 			IdentityFile: idFilepath,
-		})
+		},
+	)
 }
