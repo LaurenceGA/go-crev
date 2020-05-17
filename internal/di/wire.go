@@ -5,6 +5,7 @@ package di
 
 import (
 	"github.com/LaurenceGA/go-crev/internal/command/flow/idset"
+	"github.com/LaurenceGA/go-crev/internal/command/flow/review"
 	"github.com/LaurenceGA/go-crev/internal/command/flow/trust"
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/command/io/prompt"
@@ -91,5 +92,11 @@ func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 
 		wire.Bind(new(trust.StoreWriter), new(*writer.Writer)),
 		writer.New,
+	))
+}
+
+func InitialiseReviewCreator(commandIO *io.IO) *review.Creator {
+	panic(wire.Build(
+		review.NewCreator,
 	))
 }

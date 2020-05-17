@@ -7,6 +7,7 @@ package di
 
 import (
 	"github.com/LaurenceGA/go-crev/internal/command/flow/idset"
+	"github.com/LaurenceGA/go-crev/internal/command/flow/review"
 	"github.com/LaurenceGA/go-crev/internal/command/flow/trust"
 	"github.com/LaurenceGA/go-crev/internal/command/io"
 	"github.com/LaurenceGA/go-crev/internal/command/io/prompt"
@@ -67,5 +68,10 @@ func InitialiseTrustCreator(commandIO *io.IO) *trust.Creator {
 	loader := ssh.NewLoader(prompter)
 	writerWriter := writer.New()
 	creator := trust.NewCreator(commandIO, manipulator, client, prompter, loader, writerWriter)
+	return creator
+}
+
+func InitialiseReviewCreator(commandIO *io.IO) *review.Creator {
+	creator := review.NewCreator()
 	return creator
 }
