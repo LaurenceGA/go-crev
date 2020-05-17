@@ -1,6 +1,7 @@
 package io
 
 import (
+	"fmt"
 	"io"
 	"os"
 )
@@ -42,4 +43,18 @@ func (i *IO) Err() io.Writer {
 	}
 
 	return i.err
+}
+
+// VerbosePrintf will print out the items with the given format if set to verbose.
+func (i *IO) VerbosePrintf(format string, a ...interface{}) {
+	if i.Verbose {
+		fmt.Fprintf(i.Out(), format, a...)
+	}
+}
+
+// VerbosePrintln will print out the given items and a newline if set to verbose.
+func (i *IO) VerbosePrintln(a ...interface{}) {
+	if i.Verbose {
+		fmt.Fprintln(i.Out(), a...)
+	}
 }

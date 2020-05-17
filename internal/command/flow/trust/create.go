@@ -69,17 +69,21 @@ type CreatorOptions struct {
 }
 
 func (c *Creator) CreateTrust(ctx context.Context, usernameRaw string, options CreatorOptions) error {
-	config, err := c.loadConfig()
+	conf, err := c.loadConfig()
 	if err != nil {
 		return err
 	}
 
 	username := strings.TrimPrefix(usernameRaw, "@")
 
+	fmt.Fprintln(c.commandIO.Out(), "Looking for Github user", username)
+
 	usr, err := c.githubClient.GetUser(ctx, username)
 	if err != nil {
 		return err
 	}
+
+	c.commandIO.VerbosePrintf("Found user %d (%s)\n", usr.ID, username)
 
 	idURL := c.getUserIDURL(ctx, usr.Login)
 
@@ -105,22 +109,30 @@ func (c *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 		return err
 	}
 
-	trustObj := trust.New(uuid.New().String(), *config.CurrentID, trustLevel, trustComment, []*id.ID{trusteeID})
+	trustObj := trust.New(uuid.New().String(), *conf.CurrentID, trustLevel, trustComment, []*id.ID{trusteeID})
+
+	c.commandIO.VerbosePrintln("Signing trust")
 
 	if err := trustObj.Sign(sshKeySigner); err != nil {
 		return err
 	}
 
-	userStore := &store.ProofStore{Dir: config.CurrentStore}
+	userStore := &store.ProofStore{Dir: conf.CurrentStore}
+
+	c.commandIO.VerbosePrintln("Saving trust to current store")
 
 	if err := c.storeWriter.SaveTrust(userStore, trustObj); err != nil {
 		return fmt.Errorf("saving trust: %w", err)
 	}
 
+	fmt.Fprintf(c.commandIO.Out(), "Created trust proof %s in %s\n", trustObj.Data.ID, userStore.Dir)
+
 	return nil
 }
 
 func (c *Creator) loadConfig() (*config.Configuration, error) {
+	c.commandIO.VerbosePrintln("Loading user config")
+
 	conf, err := c.configReader.Load()
 	if err != nil {
 		return nil, err
@@ -130,17 +142,29 @@ func (c *Creator) loadConfig() (*config.Configuration, error) {
 		return nil, fmt.Errorf("invalid config: %w", err)
 	}
 
+	c.commandIO.VerbosePrintf(
+		"CurrentID: %s ID - %s (%s) - %s\n",
+		conf.CurrentID.Type,
+		conf.CurrentID.ID,
+		conf.CurrentID.Alias,
+		conf.CurrentID.URL,
+	)
+
+	c.commandIO.VerbosePrintf(
+		"CurrentStore:: %s\n",
+		conf.CurrentStore,
+	)
+
 	return conf, nil
 }
 
 func (c *Creator) getUserIDURL(ctx context.Context, username string) string {
+	fmt.Fprintf(c.commandIO.Out(), "Checking for proof store %s/%s\n", username, store.StandardCrevProofRepoName)
+
 	repo, err := c.githubClient.GetRepository(ctx, username, store.StandardCrevProofRepoName)
 	if err != nil {
 		if errors.Is(err, github.NotFoundError) {
-			fmt.Fprintf(c.commandIO.Out(),
-				"Couldn't find proof repo in Github for %s/%s\n",
-				username,
-				store.StandardCrevProofRepoName)
+			fmt.Fprintln(c.commandIO.Out(), "Not found")
 		} else {
 			// Non-fatal. Just print and move on...
 			fmt.Fprintf(c.commandIO.Err(), "Failed trying to find repository with error: %v\n", err)
@@ -148,6 +172,8 @@ func (c *Creator) getUserIDURL(ctx context.Context, username string) string {
 
 		return "" // No known crev proof URL for ID
 	}
+
+	fmt.Fprintln(c.commandIO.Out(), "Found proof store", repo.HTMLurl)
 
 	return repo.HTMLurl
 }
