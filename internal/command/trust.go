@@ -27,10 +27,12 @@ func NewCreateTrustCommand() *cobra.Command {
 		Args:  cobra.ExactArgs(expectedTrustArguments),
 	}
 
-	createTrustCmd.Flags().StringP(identityFileFlagName,
+	createTrustCmd.Flags().StringP(
+		identityFileFlagName,
 		"i",
 		"",
-		"identity file (private key) location to use for signing")
+		"identity file (private key) location to use for signing",
+	)
 
 	return createTrustCmd
 }
