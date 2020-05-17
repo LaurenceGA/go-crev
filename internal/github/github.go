@@ -33,7 +33,7 @@ type User struct {
 func (c *Client) GetUser(ctx context.Context, login string) (*User, error) {
 	usr, resp, err := c.client.Users.Get(ctx, login)
 	if err != nil {
-		if resp.StatusCode == http.StatusNotFound {
+		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil, NotFoundError
 		}
 
@@ -53,7 +53,7 @@ type Repository struct {
 func (c *Client) GetRepository(ctx context.Context, owner, repo string) (*Repository, error) {
 	repository, resp, err := c.client.Repositories.Get(ctx, owner, repo)
 	if err != nil {
-		if resp.StatusCode == http.StatusNotFound {
+		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil, NotFoundError
 		}
 
