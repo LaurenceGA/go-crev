@@ -8,7 +8,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const identityFileFlagName = "identity-file"
+const (
+	// used by flows that sign proofs
+	identityFileFlagName = "identity-file"
+)
 
 func NewRootCommand(commandIO *io.IO) *cobra.Command {
 	rootCmd := &cobra.Command{
@@ -36,6 +39,13 @@ This is version %s, built at %s
 	rootCmd.SetIn(commandIO.In())
 	rootCmd.SetOut(commandIO.Out())
 	rootCmd.SetErr(commandIO.Err())
+
+	rootCmd.PersistentFlags().BoolP(
+		"verbose",
+		"v",
+		false,
+		"show verbose output",
+	)
 
 	return rootCmd
 }
