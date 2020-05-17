@@ -8,6 +8,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const identityFileFlagName = "identity-file"
+
 func NewRootCommand(commandIO *io.IO) *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   meta.AppName,
@@ -29,6 +31,7 @@ This is version %s, built at %s
 	rootCmd.AddCommand(NewIDCommand())
 	rootCmd.AddCommand(NewVerifyCommand())
 	rootCmd.AddCommand(NewTrustCommand())
+	rootCmd.AddCommand(NewReviewCommand())
 
 	rootCmd.SetIn(commandIO.In())
 	rootCmd.SetOut(commandIO.Out())

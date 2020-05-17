@@ -17,11 +17,7 @@ func NewTrustCommand() *cobra.Command {
 	return trustCmd
 }
 
-const (
-	expectedTrustArguments = 1
-
-	identityFileFlagName = "identity-file"
-)
+const expectedTrustArguments = 1
 
 func NewCreateTrustCommand() *cobra.Command {
 	createTrustCmd := &cobra.Command{
