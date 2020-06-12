@@ -50,6 +50,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2.0.0
       - name: golangci-lint
-        uses: reviewdog/action-golangci-lint@v1.1.7
+        uses: reviewdog/action-golangci-lint@v1.6
         with:
           github_token: ${{ secrets.github_token }}
