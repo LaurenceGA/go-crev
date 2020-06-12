@@ -7,7 +7,7 @@ updates:
     day: friday
     time: '18:00'
     timezone: Asia/Tokyo
-  open-pull-requests-limit: 99
+  open-pull-requests-limit: 10
   reviewers:
   - LaurenceGA
   labels:
@@ -19,7 +19,7 @@ updates:
     day: friday
     time: '18:00'
     timezone: Asia/Tokyo
-  open-pull-requests-limit: 99
+  open-pull-requests-limit: 10
   reviewers:
   - LaurenceGA
   labels:
