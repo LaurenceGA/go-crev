@@ -32,13 +32,13 @@ jobs:
         run: go tool cover -html=coverage.out -o coverage.html
 
       - name: Upload raw test coverage data
-        uses: actions/upload-artifact@v2.2.0
+        uses: actions/upload-artifact@v2.2.1
         with:
           name: test-coverage
           path: ./coverage.out
 
       - name: Upload test coverage html
-        uses: actions/upload-artifact@v2.2.0
+        uses: actions/upload-artifact@v2.2.1
         with:
           name: test-coverage
           path: ./coverage.html
