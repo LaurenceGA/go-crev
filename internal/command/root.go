@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	// used by flows that sign proofs
+	// Used by flows that sign proofs.
 	identityFileFlagName  = "identity-file"
 	verboseOutputFlagName = "verbose"
 )
