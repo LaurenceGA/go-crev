@@ -7,7 +7,7 @@ require (
 	github.com/golang/mock v1.4.4
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-querystring v1.0.0 // indirect
-	github.com/google/uuid v1.1.2
+	github.com/google/uuid v1.1.3
 	github.com/google/wire v0.4.0
 	github.com/hhatto/gocloc v0.3.3
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
