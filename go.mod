@@ -8,7 +8,7 @@ require (
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/google/uuid v1.2.0
-	github.com/google/wire v0.4.0
+	github.com/google/wire v0.5.0
 	github.com/hhatto/gocloc v0.4.1
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/kr/text v0.2.0 // indirect
