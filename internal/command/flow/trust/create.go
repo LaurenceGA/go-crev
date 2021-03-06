@@ -109,7 +109,7 @@ func (c *Creator) CreateTrust(ctx context.Context, usernameRaw string, options C
 		return err
 	}
 
-	trustObj := trust.New(uuid.New().String(), *conf.CurrentID, trustLevel, trustComment, []*id.ID{trusteeID})
+	trustObj := trust.New(uuid.NewString(), *conf.CurrentID, trustLevel, trustComment, []*id.ID{trusteeID})
 
 	c.commandIO.VerbosePrintln("Signing trust")
 
