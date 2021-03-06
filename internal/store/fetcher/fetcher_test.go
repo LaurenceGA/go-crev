@@ -23,10 +23,6 @@ func (s *FetcherSuite) SetupTest() {
 	s.controller = gomock.NewController(s.T())
 }
 
-func (s *FetcherSuite) TearDownTest() {
-	s.controller.Finish()
-}
-
 func TestFetcher(t *testing.T) {
 	suite.Run(t, &FetcherSuite{})
 }

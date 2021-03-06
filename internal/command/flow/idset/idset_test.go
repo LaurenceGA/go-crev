@@ -230,8 +230,6 @@ func TestIDFlow(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 			}
-
-			controller.Finish()
 		})
 	}
 }
