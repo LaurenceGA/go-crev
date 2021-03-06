@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/go-openapi/strfmt v0.19.5 // indirect
-	github.com/golang/mock v1.4.4
+	github.com/golang/mock v1.5.0
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/google/uuid v1.1.2

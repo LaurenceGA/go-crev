@@ -23,10 +23,6 @@ func (s *ModSuite) SetupTest() {
 	s.controller = gomock.NewController(s.T())
 }
 
-func (s *ModSuite) TearDownTest() {
-	s.controller.Finish()
-}
-
 func TestMod(t *testing.T) {
 	suite.Run(t, &ModSuite{})
 }
