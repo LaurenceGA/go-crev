@@ -307,7 +307,6 @@ func TestCannotReadConfig(t *testing.T) {
 			t.Parallel()
 
 			controller := gomock.NewController(t)
-			defer controller.Finish()
 
 			trustCreator := trust.NewCreator(
 				&io.IO{},
