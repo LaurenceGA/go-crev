@@ -24,8 +24,7 @@ func (m *Wrapper) List() (io.Reader, error) {
 	var out bytes.Buffer
 	cmd.Stdout = &out
 
-	err := cmd.Run()
-	if err != nil {
+	if err := cmd.Run(); err != nil {
 		return nil, err
 	}
 
