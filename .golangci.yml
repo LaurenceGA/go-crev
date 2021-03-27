@@ -41,7 +41,6 @@ linters:
     - misspell
     - nakedret
     - rowserrcheck
-    - scopelint
     - staticcheck
     - structcheck
     - stylecheck
@@ -95,4 +94,4 @@ issues:
 # golangci.com configuration
 # https://github.com/golangci/golangci/wiki/Configuration
 service:
-  golangci-lint-version: 1.37.x # use the fixed version to not introduce new linters unexpectedly
+  golangci-lint-version: 1.39.x # use the fixed version to not introduce new linters unexpectedly
