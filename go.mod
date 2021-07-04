@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/go-openapi/strfmt v0.19.5 // indirect
-	github.com/golang/mock v1.5.0
+	github.com/golang/mock v1.6.0
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/google/uuid v1.2.0
@@ -23,8 +23,6 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/whilp/git-urls v0.0.0-20191001220047-6db9661140c0
 	golang.org/x/crypto v0.0.0-20200317142112-1b76d66859c6
-	golang.org/x/net v0.0.0-20200301022130-244492dfa37a // indirect
-	golang.org/x/sys v0.0.0-20200317113312-5766fd39f98d // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
