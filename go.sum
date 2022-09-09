@@ -43,8 +43,8 @@ github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMo
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/gliderlabs/ssh v0.2.2 h1:6zsha5zo/TWhRhwqCD3+EarCAgZ2yN28ipRnGPnwkI0=
 github.com/gliderlabs/ssh v0.2.2/go.mod h1:U7qILu1NlMHj9FlMhZLlkCdDnU1DBEAqr0aevW3Awn0=
-github.com/go-enry/go-enry/v2 v2.7.2 h1:IBtFo783PgL7oyd/TL1/8HQFMNzOAl4NaLPbzNOvbwM=
-github.com/go-enry/go-enry/v2 v2.7.2/go.mod h1:GVzIiAytiS5uT/QiuakK7TF1u4xDab87Y8V5EJRpsIQ=
+github.com/go-enry/go-enry/v2 v2.8.0 h1:KMW4mSG+8uUF6FaD3iPkFqyfC5tF8gRrsYImq6yhHzo=
+github.com/go-enry/go-enry/v2 v2.8.0/go.mod h1:GVzIiAytiS5uT/QiuakK7TF1u4xDab87Y8V5EJRpsIQ=
 github.com/go-enry/go-oniguruma v1.2.1 h1:k8aAMuJfMrqm/56SG2lV9Cfti6tC4x8673aHCcBk+eo=
 github.com/go-enry/go-oniguruma v1.2.1/go.mod h1:bWDhYP+S6xZQgiRL7wlTScFYBe023B6ilRZbCAD5Hf4=
 github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
@@ -84,8 +84,8 @@ github.com/grpc-ecosystem/go-grpc-middleware v1.0.0/go.mod h1:FiyG127CGDf3tlThmg
 github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0/go.mod h1:8NvIoxWQoOIhqOTXgfV/d3M/q6VIi02HzZEHgUlZvzk=
 github.com/grpc-ecosystem/grpc-gateway v1.9.0/go.mod h1:vNeuVxBJEsws4ogUvrchl83t/GYV9WGTSLVdBhOQFDY=
 github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
-github.com/hhatto/gocloc v0.4.2 h1:deh3Xb1uqiySNgOccMNYb3HbKsUoQDzsZRpfQmbTIhs=
-github.com/hhatto/gocloc v0.4.2/go.mod h1:YsPWNgXpEHv+5NAEMGlVIX1hkVypLp+b0AEB8T1NRfA=
+github.com/hhatto/gocloc v0.4.3 h1:bWbEi+cOKDAvWwPsP2lT30638Bg37X+Ru00TG7adpGg=
+github.com/hhatto/gocloc v0.4.3/go.mod h1:EPoonh5stxIeraUU70Ogyj9yIpvV6Xirnjhyx+3/cHM=
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
