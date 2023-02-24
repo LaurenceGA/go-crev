@@ -21,7 +21,7 @@ require (
 	github.com/spf13/cobra v0.0.7
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.7.1
-	github.com/whilp/git-urls v0.0.0-20191001220047-6db9661140c0
+	github.com/whilp/git-urls v1.0.0
 	golang.org/x/crypto v0.0.0-20200317142112-1b76d66859c6
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/src-d/go-git.v4 v4.13.1
