@@ -16,7 +16,7 @@ jobs:
           go-version: 1.14.x
 
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v4.1.0
 
       - uses: actions/cache@v2.1.7
         with:
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v4.1.0
       - name: golangci-lint
         uses: reviewdog/action-golangci-lint@v2.0.2
         with:
