@@ -8,7 +8,7 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](./CODE_OF_CONDUCT.md)
 
 
-:construction: This project is under construction and not currently usable :construction: 
+:x: This project is no longer being developed and not usable :x: 
 
 # go-crev
 A cryptographically verifiable code review system for go packages.
